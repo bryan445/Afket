@@ -10,6 +10,7 @@ import Profile from './components/Profile';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sprout } from 'lucide-react';
 import afketLogo from './assets/images/afket_logo_1782851553801.jpg';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -342,6 +343,7 @@ export default function App() {
           </p>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }
