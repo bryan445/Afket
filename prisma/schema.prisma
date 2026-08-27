@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Profile {
+  id           String    @id @db.Uuid
+  email        String    @unique
+  firstName    String    @map("firstName")
+  surname      String    @map("surname")
+  fullName     String    @map("fullName")
+  role         String
+  businessName String?   @map("businessName")
+  phone        String?
+  location     String
+  joinedAt     DateTime  @default(now()) @map("joinedAt") @db.Timestamptz
+  nationality  String?
+  whatsapp     String?
+  facebook     String?
+  contactEmail String?   @map("contactEmail")
+
+  products       Product[]
+  ordersAsBuyer  Order[]       @relation("BuyerOrders")
+  ordersAsSeller Order[]       @relation("SellerOrders")
+  ordersAsLogistics Order[]    @relation("LogisticsOrders")
+  logisticsJobs  LogisticsJob[]
+
+  @@map("profiles")
+}
+
+model Product {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sellerId           String   @map("sellerId") @db.Uuid
+  sellerName         String   @map("sellerName")
+  sellerBusinessName String?  @map("sellerBusinessName")
+  sellerNationality  String?  @map("sellerNationality")
+  sellerPhone        String?  @map("sellerPhone")
+  sellerEmail        String?  @map("sellerEmail")
+  sellerWhatsapp     String?  @map("sellerWhatsapp")
+  sellerFacebook     String?  @map("sellerFacebook")
+  localCurrency      String?  @map("localCurrency")
+  title              String
+  description        String
+  category           String
+  price              Decimal  @db.Decimal
+  localPrice         Decimal  @map("localPrice") @db.Decimal
+  internationalPrice Decimal  @map("internationalPrice") @db.Decimal
+  unit               String
+  availableQuantity  Decimal  @default(0) @map("availableQuantity") @db.Decimal
+  condition          String
+  minOrderQty        Decimal? @map("minOrderQty") @db.Decimal
+  packaging          String?
+  certifications     String?
+  location           String
+  imageUrl           String   @map("imageUrl")
+  imageUrls          String[] @map("imageUrls")
+  harvestDate        String?  @map("harvestDate")
+  createdAt          DateTime @default(now()) @map("createdAt") @db.Timestamptz
+
+  seller             Profile  @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  orders             Order[]
+
+  @@map("products")
+}
+
+model Order {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId       String?        @map("productId") @db.Uuid
+  productTitle    String         @map("productTitle")
+  buyerId         String         @map("buyerId") @db.Uuid
+  buyerName       String         @map("buyerName")
+  sellerId        String         @map("sellerId") @db.Uuid
+  sellerName      String         @map("sellerName")
+  quantity        Decimal        @db.Decimal
+  totalPrice      Decimal        @map("totalPrice") @db.Decimal
+  status          String         @default("pending")
+  deliveryAddress String         @map("deliveryAddress")
+  createdAt       DateTime       @default(now()) @map("createdAt") @db.Timestamptz
+  logisticsId     String?        @map("logisticsId") @db.Uuid
+  logisticsStatus String?        @map("logisticsStatus")
+
+  product         Product?       @relation(fields: [productId], references: [id], onDelete: SetNull)
+  buyer           Profile        @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller          Profile        @relation("SellerOrders", fields: [sellerId], references: [id], onDelete: Cascade)
+  logistics       Profile?       @relation("LogisticsOrders", fields: [logisticsId], references: [id], onDelete: SetNull)
+  logisticsJobs   LogisticsJob[]
+
+  @@map("orders")
+}
+
+model LogisticsJob {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId           String   @map("orderId") @db.Uuid
+  productTitle      String   @map("productTitle")
+  quantity          Decimal  @db.Decimal
+  unit              String
+  buyerName         String   @map("buyerName")
+  buyerPhone        String?  @map("buyerPhone")
+  sellerName        String   @map("sellerName")
+  sellerPhone       String?  @map("sellerPhone")
+  pickupLocation    String   @map("pickupLocation")
+  deliveryLocation  String   @map("deliveryLocation")
+  status            String   @default("awaiting_pickup")
+  providerId        String?  @map("providerId") @db.Uuid
+  providerName      String?  @map("providerName")
+  providerPhone     String?  @map("providerPhone")
+  providerEmail     String?  @map("providerEmail")
+  providerWhatsapp  String?  @map("providerWhatsapp")
+  providerFacebook  String?  @map("providerFacebook")
+  quotePrice        Decimal? @map("quotePrice") @db.Decimal
+  estimatedDelivery String?  @map("estimatedDelivery")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updatedAt") @db.Timestamptz
+
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider          Profile? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+
+  @@map("logistics_jobs")
+}
