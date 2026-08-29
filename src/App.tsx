@@ -15,10 +15,14 @@ import { Sprout, Headphones } from 'lucide-react';
 import { WhatsAppLogo, CallLogo, EmailLogo } from './components/BrandIcons';
 import afketLogo from './assets/images/afket_logo_1782851553801.jpg';
 
+// Engagement threshold required before the mid-session popup roll can occur.
+// "Switches" = number of times the user has navigated between tabs.
+const MIN_SWITCHES_BEFORE_POPUP = 10;
+
 export default function App() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState<string>('dashboard');
+  const [currentTab, setCurrentTabState] = useState<string>('dashboard');
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Random Login Popups State
@@ -26,6 +30,12 @@ export default function App() {
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const hasCheckedLoginPopups = useRef<string | null>(null);
+  const hasTriggeredThisSession = useRef(false);
+
+  // Engagement counter used to decide when the user is "mid-session"
+  // rather than firing the popup right at login.
+  const [switchCount, setSwitchCount] = useState(0);
+
   const [isPasswordRecovery, setIsPasswordRecovery] = useState(() => {
     const hash = typeof window !== 'undefined' ? window.location.hash || '' : '';
     const search = typeof window !== 'undefined' ? window.location.search || '' : '';
@@ -164,7 +174,7 @@ export default function App() {
 
         if (profile) {
           setUser(profile);
-          setCurrentTab('dashboard'); // Open user's dashboard
+          setCurrentTabState('dashboard'); // Open user's dashboard
           cleanUrlAddressBar();
         } else {
           // Profile does not exist yet or connection failed!
@@ -232,7 +242,7 @@ export default function App() {
           setLocalStorage('afket_profiles', localProfiles);
           
           setUser(newProfile);
-          setCurrentTab('dashboard'); // Open user's dashboard
+          setCurrentTabState('dashboard'); // Open user's dashboard
           cleanUrlAddressBar();
         }
       } catch (err) {
@@ -302,8 +312,10 @@ export default function App() {
     try {
       await db.auth.signOut();
       setUser(null);
-      setCurrentTab('dashboard');
+      setCurrentTabState('dashboard');
       hasCheckedLoginPopups.current = null;
+      hasTriggeredThisSession.current = false;
+      setSwitchCount(0);
     } catch (e) {
       console.error(e);
     }
@@ -313,41 +325,58 @@ export default function App() {
     setUser(updatedProfile);
   };
 
-  // Trigger Random Login Popup on authentication / session load
+  // Central tab-navigation handler. Every place that changes the active tab
+  // (Navbar, Dashboard shortcuts, Products, Logistics, etc.) goes through this
+  // so we can count how many times the user actually switches tabs.
+  const setCurrentTab = (tab: string) => {
+    setSwitchCount(prev => prev + 1);
+    setCurrentTabState(tab);
+  };
+
+  // Reset engagement counter whenever a new user session starts.
   useEffect(() => {
     if (user && !loading && !isVerifyingLink) {
       const userKey = `${user.id}_${user.subscriptionStatus}`;
-      if (hasCheckedLoginPopups.current === userKey) return;
-      hasCheckedLoginPopups.current = userKey;
-
-      const sessionPopupKey = `afket_login_popup_${user.id}`;
-      const lastShown = sessionStorage.getItem(sessionPopupKey);
-
-      const timer = setTimeout(() => {
-        if (!lastShown) {
-          sessionStorage.setItem(sessionPopupKey, 'true');
-          const subInfo = getUserSubscriptionInfo(user);
-          const roll = Math.random();
-
-          if (!subInfo.isPaid) {
-            // Unpaid user: 65% chance for Subscription payment popup, 35% chance for User feedback popup
-            if (roll < 0.65) {
-              setShowSubPromoPopup(true);
-            } else {
-              setShowFeedbackPopup(true);
-            }
-          } else {
-            // Paid user: 60% chance for User feedback popup
-            if (roll < 0.60) {
-              setShowFeedbackPopup(true);
-            }
-          }
-        }
-      }, 1200);
-
-      return () => clearTimeout(timer);
+      if (hasCheckedLoginPopups.current !== userKey) {
+        hasCheckedLoginPopups.current = userKey;
+        hasTriggeredThisSession.current = false;
+        setSwitchCount(0);
+      }
     }
   }, [user, loading, isVerifyingLink]);
+
+  // Trigger the mid-session popup once the user has switched tabs enough
+  // times - MIN_SWITCHES_BEFORE_POPUP - rather than right at login.
+  useEffect(() => {
+    if (!user || loading || isVerifyingLink) return;
+    if (hasTriggeredThisSession.current) return;
+
+    const sessionPopupKey = `afket_login_popup_${user.id}`;
+    const lastShown = sessionStorage.getItem(sessionPopupKey);
+    if (lastShown) return;
+
+    if (switchCount >= MIN_SWITCHES_BEFORE_POPUP) {
+      hasTriggeredThisSession.current = true;
+      sessionStorage.setItem(sessionPopupKey, 'true');
+
+      const subInfo = getUserSubscriptionInfo(user);
+      const roll = Math.random();
+
+      if (!subInfo.isPaid) {
+        // Unpaid user: 65% chance for Subscription payment popup, 35% chance for User feedback popup
+        if (roll < 0.65) {
+          setShowSubPromoPopup(true);
+        } else {
+          setShowFeedbackPopup(true);
+        }
+      } else {
+        // Paid user: 60% chance for User feedback popup
+        if (roll < 0.60) {
+          setShowFeedbackPopup(true);
+        }
+      }
+    }
+  }, [switchCount, user, loading, isVerifyingLink]);
 
   if (isVerifyingLink) {
     return (
@@ -397,7 +426,7 @@ export default function App() {
         onAuthSuccess={(profile) => {
           setUser(profile);
           setIsPasswordRecovery(false);
-          setCurrentTab('dashboard');
+          setCurrentTabState('dashboard');
         }} 
         initialError={authError || undefined} 
         isRecoveryMode={isPasswordRecovery}
@@ -538,7 +567,7 @@ export default function App() {
         />
       )}
 
-      {/* Random User Feedback Popup */}
+      {/* Mid-Session User Feedback Popup (fires after enough engagement) */}
       {user && (
         <UserFeedbackPopup
           user={user}
