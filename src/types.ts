@@ -310,9 +310,38 @@ export interface ProductUploadPermission {
 }
 
 /**
+ * Retrieves the seller's lifetime uploaded product count from storage.
+ */
+export function getSellerLifetimeUploadCount(userId: string): number {
+  if (typeof window === 'undefined' || !userId) return 0;
+  try {
+    const raw = localStorage.getItem(`afket_lifetime_seller_uploads_${userId}`);
+    return raw ? parseInt(raw, 10) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Increments and persists the seller's lifetime uploaded product count.
+ */
+export function incrementSellerLifetimeUploadCount(userId: string, currentActiveCount: number = 0): number {
+  if (typeof window === 'undefined' || !userId) return currentActiveCount + 1;
+  try {
+    const key = `afket_lifetime_seller_uploads_${userId}`;
+    const current = parseInt(localStorage.getItem(key) || '0', 10);
+    const next = Math.max(current + 1, currentActiveCount + 1);
+    localStorage.setItem(key, String(next));
+    return next;
+  } catch {
+    return currentActiveCount + 1;
+  }
+}
+
+/**
  * Checks if a user is permitted to upload or list products on the AFKET Marketplace.
- * - During the free period, sellers can add only three (3) products for sale.
- * - If a seller attempts to add a fourth (4th) product, they are blocked with a note to subscribe to continue uploading.
+ * - During the free period, sellers can add only three (3) products for sale in total.
+ * - When the number of listings reaches 3, the seller cannot upload more products even if they delete a product, unless they subscribe.
  * - Active paid subscription unlocks unlimited product listings.
  */
 export function checkProductUploadEligibility(
@@ -320,7 +349,8 @@ export function checkProductUploadEligibility(
   existingProductCount: number = 0
 ): ProductUploadPermission {
   const subInfo = getUserSubscriptionInfo(user);
-  const count = Math.max(0, existingProductCount);
+  const lifetimeCount = user?.id ? getSellerLifetimeUploadCount(user.id) : 0;
+  const count = Math.max(0, existingProductCount, lifetimeCount);
 
   if (!user || !user.id) {
     return {
@@ -373,12 +403,12 @@ export function checkProductUploadEligibility(
     };
   }
 
-  // Within free period: seller can add up to MAX_FREE_SELLER_PRODUCTS (3 products)
-  // If attempting to add 4th product (count >= 3), block and display note to subscribe
+  // Within free period: seller can add up to MAX_FREE_SELLER_PRODUCTS (3 products in total lifetime)
+  // If count >= 3, block further uploads even if they delete a product
   if (count >= MAX_FREE_SELLER_PRODUCTS) {
     return {
       allowed: false,
-      reason: `You have reached the free limit of ${MAX_FREE_SELLER_PRODUCTS} products for sale. Please subscribe to your Monthly or Annual plan to continue uploading and selling more products.`,
+      reason: `You have reached the free trial limit of ${MAX_FREE_SELLER_PRODUCTS} product listings. Even if you delete an existing product, trial accounts cannot upload more than ${MAX_FREE_SELLER_PRODUCTS} listings. Please subscribe to continue uploading and selling more products.`,
       isExpired: false,
       isUnpaid: true,
       maxFreeProducts: MAX_FREE_SELLER_PRODUCTS,
@@ -395,7 +425,7 @@ export function checkProductUploadEligibility(
   const remaining = MAX_FREE_SELLER_PRODUCTS - count;
   return {
     allowed: true,
-    reason: `Free Period: ${count} of ${MAX_FREE_SELLER_PRODUCTS} products listed (${remaining} remaining in free period).`,
+    reason: `Free Trial: ${count} of ${MAX_FREE_SELLER_PRODUCTS} products listed (${remaining} remaining).`,
     isExpired: false,
     isUnpaid: true,
     maxFreeProducts: MAX_FREE_SELLER_PRODUCTS,

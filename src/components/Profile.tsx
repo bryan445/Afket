@@ -27,7 +27,7 @@ import {
   Zap,
   Tag
 } from 'lucide-react';
-import { WhatsAppLogo, CallLogo, EmailLogo, FacebookLogo } from './BrandIcons';
+import { WhatsAppLogo, CallLogo, EmailLogo, FacebookLogo, AirtelMoneyLogo, MpambaLogo, MalawiBanksLogo, VisaMastercardLogo } from './BrandIcons';
 import { triggerPayChanguPayment, generatePayChanguTxRef, PayChanguChannel } from '../lib/paychangu';
 
 const LOGO_PRESETS = [
@@ -392,44 +392,44 @@ export default function Profile({ user, onUpdateProfile }: ProfileProps) {
       </div>
 
       {/* REGISTRATION & SUBSCRIPTION STATUS BANNER CARD */}
-      <div className={`rounded-3xl p-5 sm:p-6 border text-left transition-all ${
+      <div className={`rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border text-left transition-all ${
         subInfo.isPaid
           ? 'bg-gradient-to-r from-[#F0FDF4] to-[#ECFCCB] border-emerald-200 shadow-xs'
           : subInfo.isTrialActive
           ? 'bg-gradient-to-r from-[#F7FEE7] via-[#ECFCCB]/40 to-white border-lime-300 shadow-xs'
           : 'bg-gradient-to-r from-[#FFFBEB] to-[#FEF3C7] border-amber-300 shadow-xs'
       }`}>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-gray-500">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+          <div className="space-y-1 sm:space-y-1.5">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 flex-wrap gap-y-1">
+              <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-gray-500">
                 AFKET Membership & Subscription
               </span>
-              <span className="text-[11px] font-black uppercase px-2.5 py-0.5 rounded-full border bg-emerald-600 text-white border-emerald-700">
+              <span className="text-[9px] sm:text-[11px] font-black uppercase px-2 sm:px-2.5 py-0.5 rounded-full border bg-emerald-600 text-white border-emerald-700">
                 REGISTRATION: FREE (ACTIVE)
               </span>
               {subInfo.isPaid ? (
-                <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full border bg-emerald-100 text-emerald-800 border-emerald-300 flex items-center gap-1">
+                <span className="text-[9px] sm:text-[11px] font-bold uppercase px-2 sm:px-2.5 py-0.5 rounded-full border bg-emerald-100 text-emerald-800 border-emerald-300 flex items-center gap-1">
                   <CheckCircle2 className="h-3 w-3 text-emerald-600 inline" />
-                  SUBSCRIPTION FEE: {user.subscriptionType === 'annual' ? 'PAID (ANNUAL PLAN)' : 'PAID (MONTHLY PLAN)'}
+                  SUBSCRIPTION: {user.subscriptionType === 'annual' ? 'ANNUAL PLAN' : 'MONTHLY PLAN'}
                 </span>
               ) : subInfo.isTrialActive ? (
-                <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full border bg-amber-100 text-amber-900 border-amber-300 flex items-center gap-1">
+                <span className="text-[9px] sm:text-[11px] font-bold uppercase px-2 sm:px-2.5 py-0.5 rounded-full border bg-amber-100 text-amber-900 border-amber-300 flex items-center gap-1">
                   <Sparkles className="h-3 w-3 text-amber-700 inline" />
-                  SUBSCRIPTION FEE: NOT PAID (1-MONTH FREE USAGE - {subInfo.daysRemaining}D LEFT)
+                  TRIAL: {subInfo.daysRemaining}D LEFT
                 </span>
               ) : (
-                <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full border bg-rose-600 text-white border-rose-700 flex items-center gap-1">
+                <span className="text-[9px] sm:text-[11px] font-bold uppercase px-2 sm:px-2.5 py-0.5 rounded-full border bg-rose-600 text-white border-rose-700 flex items-center gap-1">
                   <AlertCircle className="h-3 w-3 inline" />
-                  SUBSCRIPTION FEE: NOT PAID (PAYMENT DUE)
+                  FEE DUE
                 </span>
               )}
-              <span className="text-[10px] font-mono font-bold text-[#365314] bg-lime-100 px-2 py-0.5 rounded-md border border-lime-200">
+              <span className="text-[9px] sm:text-[10px] font-mono font-bold text-[#365314] bg-lime-100 px-1.5 sm:px-2 py-0.5 rounded-md border border-lime-200">
                 {subInfo.tierLabel}
               </span>
             </div>
 
-            <h3 className="text-lg font-black text-[#1F2937]">
+            <h3 className="text-base sm:text-lg font-black text-[#1F2937] leading-snug">
               {subInfo.isPaid
                 ? `Active ${user.subscriptionType === 'annual' ? 'Annual' : 'Monthly'} Trade Subscription (${user.subscriptionType === 'annual' ? subInfo.annualFee.toLocaleString() + ' MWK/yr' : subInfo.monthlyFee.toLocaleString() + ' MWK/mo'})`
                 : subInfo.isTrialActive
@@ -437,30 +437,30 @@ export default function Profile({ user, onUpdateProfile }: ProfileProps) {
                 : `Subscription Fee Due: Choose Monthly (${subInfo.monthlyFee.toLocaleString()} MWK) or Annual (${subInfo.annualFee.toLocaleString()} MWK)`}
             </h3>
 
-            <p className="text-xs text-gray-600 max-w-2xl font-medium">
+            <p className="text-[11px] sm:text-xs text-gray-600 max-w-2xl font-medium leading-relaxed">
               {subInfo.isPaid ? (
                 <span>
                   Subscription renewed via <strong>{user.lastSubscriptionPaymentMethod || user.registrationPaymentMethod || 'Online Payment'}</strong>.
-                  {user.lastSubscriptionPaymentRef && <> Ref: <code className="bg-white/80 px-1.5 py-0.5 rounded text-[11px] font-bold">{user.lastSubscriptionPaymentRef}</code>.</>}
-                  {' '}Valid until <strong>{subInfo.formattedDueDate}</strong> ({user.subscriptionType === 'annual' ? '365 Days Plan' : '30 Days Plan'}). Your account has complete access to cross-border matchmaking, escrow contracts, and logistics dispatch.
+                  {user.lastSubscriptionPaymentRef && <> Ref: <code className="bg-white/80 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-bold">{user.lastSubscriptionPaymentRef}</code>.</>}
+                  {' '}Valid until <strong>{subInfo.formattedDueDate}</strong> ({user.subscriptionType === 'annual' ? '365 Days Plan' : '30 Days Plan'}).
                 </span>
               ) : subInfo.isTrialActive ? (
                 <span>
-                  You are currently enjoying your <strong>1-month free trial (30 days)</strong> with trade access across the network! You can subscribe on a monthly plan (<strong>{subInfo.monthlyFee.toLocaleString()} MWK/month</strong>) or save money on our discounted annual plan (<strong>{subInfo.annualFee.toLocaleString()} MWK/year</strong>). Your payment is due on <strong>{subInfo.formattedDueDate}</strong>.
+                  You are currently enjoying your <strong>1-month free trial (30 days)</strong> with full trade access! Subscribe monthly (<strong>{subInfo.monthlyFee.toLocaleString()} MWK/mo</strong>) or discounted annual plan (<strong>{subInfo.annualFee.toLocaleString()} MWK/yr</strong>). Due on <strong>{subInfo.formattedDueDate}</strong>.
                 </span>
               ) : (
                 <span>
-                  Your 1-month free usage has concluded. Settle your subscription ({subInfo.monthlyFee.toLocaleString()} MWK/mo or save with {subInfo.annualFee.toLocaleString()} MWK/yr) to keep your trade listings and freight operations active.
+                  Your 1-month free usage has concluded. Settle your subscription ({subInfo.monthlyFee.toLocaleString()} MWK/mo or save with {subInfo.annualFee.toLocaleString()} MWK/yr) to keep your trade listings active.
                 </span>
               )}
             </p>
           </div>
 
-          <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1 sm:pt-0">
             <button
               id="btn-profile-pay-subscription"
               onClick={() => setShowPaymentModal(true)}
-              className="bg-[#D97706] hover:bg-[#b45309] active:bg-[#92400E] text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow-sm flex items-center justify-center space-x-2 cursor-pointer"
+              className="bg-[#D97706] hover:bg-[#b45309] active:bg-[#92400E] text-white font-bold text-xs px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl transition shadow-xs flex items-center justify-center space-x-1.5 sm:space-x-2 cursor-pointer"
             >
               <Coins className="h-4 w-4" />
               <span>
@@ -935,195 +935,214 @@ export default function Profile({ user, onUpdateProfile }: ProfileProps) {
 
       {/* REGISTRATION & SUBSCRIPTION PAYMENT MODAL */}
       {showPaymentModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full text-left shadow-2xl relative border border-gray-100 animate-scale-up max-h-[92vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-2.5 sm:p-4">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-lg w-full text-left shadow-2xl relative border border-gray-100 animate-scale-up max-h-[94vh] overflow-y-auto">
             <button
               onClick={() => setShowPaymentModal(false)}
-              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition cursor-pointer"
+              aria-label="Close payment modal"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-700 hover:text-gray-950 bg-gray-100 hover:bg-gray-200 border border-gray-300 p-2 sm:p-2.5 rounded-full transition shadow-xs cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#365314] shrink-0"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
 
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="h-12 w-12 rounded-2xl bg-[#365314] text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
-                <CreditCard className="h-6 w-6" />
+            <div className="flex items-center space-x-2.5 sm:space-x-3 mb-3 sm:mb-4">
+              <div className="h-9 w-9 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-[#365314] text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-2xs">
+                <CreditCard className="h-4 w-4 sm:h-6 sm:w-6" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-[#1F2937]">Pay Your Subscription</h3>
-                <span className="text-xs text-gray-500 font-medium">
-                  {subInfo.tierLabel} • Mobile Money & Card Payment
+                <h3 className="text-base sm:text-xl font-black text-[#1F2937]">Pay Your Subscription</h3>
+                <span className="text-[11px] sm:text-xs text-gray-500 font-medium">
+                  {subInfo.tierLabel} • Mobile Money & Card
                 </span>
               </div>
             </div>
 
             {paymentSuccessMsg ? (
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-2xl p-4 mb-4 flex items-center space-x-3 font-bold">
-                <CheckCircle2 className="h-6 w-6 text-emerald-600 shrink-0" />
+              <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] sm:text-xs rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-3 sm:mb-4 flex items-center space-x-2.5 sm:space-x-3 font-bold">
+                <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600 shrink-0" />
                 <span>{paymentSuccessMsg}</span>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {/* Plan Selection Toggle (Monthly vs Annual) */}
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block mb-2">
+                  <label className="text-[11px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider block mb-1.5 sm:mb-2">
                     Choose Subscription Billing Plan
                   </label>
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
                     {/* Monthly Plan Option */}
                     <button
                       type="button"
                       onClick={() => setSelectedPlan('monthly')}
-                      className={`p-3.5 rounded-2xl border text-left transition cursor-pointer relative ${
+                      className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition cursor-pointer relative ${
                         selectedPlan === 'monthly'
                           ? 'border-[#365314] bg-[#F7FEE7] ring-2 ring-[#365314]/30'
                           : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-700'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs text-gray-900">Monthly Plan</span>
-                        <Calendar className="h-3.5 w-3.5 text-gray-500" />
+                      <div className="flex items-center justify-between mb-0.5 sm:mb-1">
+                        <span className="font-bold text-[11px] sm:text-xs text-gray-900">Monthly</span>
+                        <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-gray-500" />
                       </div>
-                      <div className="text-base font-black text-[#1F2937]">
-                        {subInfo.monthlyFee.toLocaleString()} <span className="text-[11px] font-bold text-gray-500">MWK/mo</span>
+                      <div className="text-sm sm:text-base font-black text-[#1F2937]">
+                        {subInfo.monthlyFee.toLocaleString()} <span className="text-[10px] sm:text-[11px] font-bold text-gray-500">MWK</span>
                       </div>
-                      <span className="text-[10px] text-gray-500 block mt-0.5">30-day active cycle</span>
+                      <span className="text-[9px] sm:text-[10px] text-gray-500 block mt-0.5">30-day cycle</span>
                     </button>
 
                     {/* Annual Plan Option */}
                     <button
                       type="button"
                       onClick={() => setSelectedPlan('annual')}
-                      className={`p-3.5 rounded-2xl border text-left transition cursor-pointer relative ${
+                      className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition cursor-pointer relative ${
                         selectedPlan === 'annual'
                           ? 'border-[#D97706] bg-[#FFFBEB] ring-2 ring-[#D97706]/30'
                           : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-700'
                       }`}
                     >
-                      <span className="absolute -top-2.5 right-2 bg-[#D97706] text-white text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full shadow-2xs">
+                      <span className="absolute -top-2 right-1.5 sm:-top-2.5 sm:right-2 bg-[#D97706] text-white text-[8px] sm:text-[9px] font-extrabold uppercase px-1.5 sm:px-2 py-0.5 rounded-full shadow-2xs">
                         Save {annualSavings.toLocaleString()} MWK
                       </span>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs text-[#92400E]">Annual Plan</span>
-                        <Zap className="h-3.5 w-3.5 text-[#D97706]" />
+                      <div className="flex items-center justify-between mb-0.5 sm:mb-1">
+                        <span className="font-bold text-[11px] sm:text-xs text-[#92400E]">Annual Plan</span>
+                        <Zap className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#D97706]" />
                       </div>
-                      <div className="text-base font-black text-[#1F2937]">
-                        {subInfo.annualFee.toLocaleString()} <span className="text-[11px] font-bold text-[#D97706]">MWK/yr</span>
+                      <div className="text-sm sm:text-base font-black text-[#1F2937]">
+                        {subInfo.annualFee.toLocaleString()} <span className="text-[10px] sm:text-[11px] font-bold text-[#D97706]">MWK</span>
                       </div>
-                      <span className="text-[10px] text-emerald-700 font-bold block mt-0.5">365-day full year access</span>
+                      <span className="text-[9px] sm:text-[10px] text-emerald-700 font-bold block mt-0.5">365-day access</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Pricing Summary Card */}
-                <div className="bg-gradient-to-br from-[#FAF9F6] to-[#FFFBEB] border border-amber-200 rounded-2xl p-4 flex items-center justify-between">
+                <div className="bg-gradient-to-br from-[#FAF9F6] to-[#FFFBEB] border border-amber-200 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 flex items-center justify-between">
                   <div>
-                    <span className="text-xs text-gray-500 block">
-                      {selectedPlan === 'annual' ? 'Annual Subscription Total (365 Days):' : 'Monthly Subscription Total (30 Days):'}
+                    <span className="text-[10px] sm:text-xs text-gray-500 block">
+                      {selectedPlan === 'annual' ? 'Annual Total (365 Days):' : 'Monthly Total (30 Days):'}
                     </span>
-                    <strong className="text-2xl sm:text-3xl font-black text-[#1F2937]">
-                      {effectiveFee.toLocaleString()} <span className="text-sm font-bold text-[#D97706]">MWK</span>
+                    <strong className="text-lg sm:text-2xl md:text-3xl font-black text-[#1F2937]">
+                      {effectiveFee.toLocaleString()} <span className="text-xs sm:text-sm font-bold text-[#D97706]">MWK</span>
                     </strong>
                     {selectedPlan === 'annual' && (
-                      <span className="text-[11px] text-emerald-700 font-bold block">
-                        ✓ Discount applied (Save {annualSavings.toLocaleString()} MWK vs monthly)
+                      <span className="text-[10px] sm:text-[11px] text-emerald-700 font-bold block">
+                        ✓ Save {annualSavings.toLocaleString()} MWK
                       </span>
                     )}
                   </div>
-                  <span className="text-xs font-bold bg-amber-100 text-[#92400E] px-3 py-1.5 rounded-full border border-amber-200 shrink-0">
-                    Secure Payment
+                  <span className="text-[10px] sm:text-xs font-bold bg-amber-100 text-[#92400E] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-amber-200 shrink-0">
+                    Secure
                   </span>
                 </div>
 
+                {/* Payment Method Selector - Compact Logos Only */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">
-                      Payment Method
+                  <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                    <label className="text-[11px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider block">
+                      Payment Channel
                     </label>
-                    <span className="text-[10px] text-gray-500 font-medium">Airtel • Mpamba • Card • Bank</span>
+                    <span className="text-[10px] font-bold text-[#365314] bg-lime-100/80 px-2 py-0.5 rounded-md">
+                      {paymentMethod === 'airtel' && '🇲🇼 Airtel Money (*211#)'}
+                      {paymentMethod === 'mpamba' && '🇲🇼 TNM Mpamba (*444#)'}
+                      {paymentMethod === 'bank' && '🏦 Bank Transfer / Mo626'}
+                      {paymentMethod === 'card' && '💳 Card (Visa / Mastercard)'}
+                    </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+                    {/* Airtel Logo Button */}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('airtel')}
-                      className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                      title="Pay with Airtel Money"
+                      className={`p-1.5 sm:p-2 rounded-xl border transition cursor-pointer flex items-center justify-center relative ${
                         paymentMethod === 'airtel'
-                          ? 'border-[#D97706] bg-red-50/40 ring-2 ring-[#D97706]/20'
-                          : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-700'
+                          ? 'border-red-600 bg-red-50/70 ring-2 ring-red-500/40 shadow-xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs text-red-600">Airtel Money</span>
-                        <Wallet className="h-3.5 w-3.5 text-red-500" />
-                      </div>
-                      <span className="text-[10px] text-gray-500 block">Instant *211# Mobile Push</span>
+                      <AirtelMoneyLogo className="h-6 sm:h-7.5 w-auto max-w-full" />
+                      {paymentMethod === 'airtel' && (
+                        <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white rounded-full p-0.5 shadow-2xs">
+                          <Check className="h-2.5 w-2.5" />
+                        </span>
+                      )}
                     </button>
 
+                    {/* TNM Mpamba Logo Button */}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('mpamba')}
-                      className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                      title="Pay with TNM Mpamba"
+                      className={`p-1.5 sm:p-2 rounded-xl border transition cursor-pointer flex items-center justify-center relative ${
                         paymentMethod === 'mpamba'
-                          ? 'border-[#D97706] bg-green-50/40 ring-2 ring-[#D97706]/20'
-                          : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-700'
+                          ? 'border-emerald-600 bg-emerald-50/70 ring-2 ring-emerald-500/40 shadow-xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs text-emerald-600">TNM Mpamba</span>
-                        <Wallet className="h-3.5 w-3.5 text-emerald-500" />
-                      </div>
-                      <span className="text-[10px] text-gray-500 block">Instant *444# Push</span>
+                      <MpambaLogo className="h-6 sm:h-7.5 w-auto max-w-full" />
+                      {paymentMethod === 'mpamba' && (
+                        <span className="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white rounded-full p-0.5 shadow-2xs">
+                          <Check className="h-2.5 w-2.5" />
+                        </span>
+                      )}
                     </button>
 
+                    {/* Bank Transfer Logo Button */}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('bank')}
-                      className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                      title="Pay with Bank Transfer / Mo626"
+                      className={`p-1.5 sm:p-2 rounded-xl border transition cursor-pointer flex items-center justify-center relative ${
                         paymentMethod === 'bank'
-                          ? 'border-[#D97706] bg-blue-50/40 ring-2 ring-[#D97706]/20'
-                          : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-700'
+                          ? 'border-slate-800 bg-slate-100 ring-2 ring-slate-700/40 shadow-xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs text-blue-700">Bank / Mo626</span>
-                        <Building className="h-3.5 w-3.5 text-blue-600" />
-                      </div>
-                      <span className="text-[10px] text-gray-500 block">NBM, Standard Bank, NBS</span>
+                      <MalawiBanksLogo className="h-6 sm:h-7.5 w-auto max-w-full" />
+                      {paymentMethod === 'bank' && (
+                        <span className="absolute -top-1.5 -right-1.5 bg-slate-900 text-white rounded-full p-0.5 shadow-2xs">
+                          <Check className="h-2.5 w-2.5" />
+                        </span>
+                      )}
                     </button>
 
+                    {/* Card (Visa / Mastercard) Logo Button */}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('card')}
-                      className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                      title="Pay with Visa or Mastercard"
+                      className={`p-1.5 sm:p-2 rounded-xl border transition cursor-pointer flex items-center justify-center relative ${
                         paymentMethod === 'card'
-                          ? 'border-[#D97706] bg-amber-50/40 ring-2 ring-[#D97706]/20'
-                          : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-700'
+                          ? 'border-indigo-600 bg-indigo-50/70 ring-2 ring-indigo-500/40 shadow-xs'
+                          : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs text-gray-900">Visa / Mastercard</span>
-                        <CreditCard className="h-3.5 w-3.5 text-gray-600" />
-                      </div>
-                      <span className="text-[10px] text-gray-500 block">3D Secure / Verified</span>
+                      <VisaMastercardLogo className="h-6 sm:h-7.5 w-auto max-w-full" />
+                      {paymentMethod === 'card' && (
+                        <span className="absolute -top-1.5 -right-1.5 bg-indigo-600 text-white rounded-full p-0.5 shadow-2xs">
+                          <Check className="h-2.5 w-2.5" />
+                        </span>
+                      )}
                     </button>
                   </div>
                 </div>
 
-                <div className="bg-[#FAF9F6] border border-gray-200 rounded-xl p-3 space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-gray-700 font-bold border-b border-gray-200/80 pb-1.5">
+                <div className="bg-[#FAF9F6] border border-gray-200 rounded-xl p-2.5 sm:p-3 space-y-1.5 sm:space-y-2 text-[11px] sm:text-xs">
+                  <div className="flex items-center justify-between text-gray-700 font-bold border-b border-gray-200/80 pb-1 sm:pb-1.5">
                     <span>
                       {paymentMethod === 'airtel' && '🇲🇼 Airtel Money (Malawi)'}
                       {paymentMethod === 'mpamba' && '🇲🇼 TNM Mpamba (Malawi)'}
                       {paymentMethod === 'bank' && '🏦 Bank Transfer / Mo626'}
                       {paymentMethod === 'card' && '💳 Secure Card Payment'}
                     </span>
-                    <span className="text-[10px] font-mono text-[#365314] font-bold uppercase bg-lime-100 px-2 py-0.5 rounded">
-                      Instant Verification
+                    <span className="text-[9px] sm:text-[10px] font-mono text-[#365314] font-bold uppercase bg-lime-100 px-1.5 sm:px-2 py-0.5 rounded">
+                      Verified
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5 sm:pt-1">
                     <div>
-                      <label className="text-[10px] font-bold text-gray-600 block mb-1">
+                      <label className="text-[10px] font-bold text-gray-600 block mb-0.5 sm:mb-1">
                         Payer Phone / Account Number
                       </label>
                       <input
@@ -1131,12 +1150,12 @@ export default function Profile({ user, onUpdateProfile }: ProfileProps) {
                         placeholder="+265 999 000 000"
                         value={paymentPhone}
                         onChange={(e) => setPaymentPhone(e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:ring-1 focus:ring-[#D97706]"
+                        className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:ring-1 focus:ring-[#D97706]"
                       />
                     </div>
 
                     <div>
-                      <div className="flex justify-between items-center mb-1">
+                      <div className="flex justify-between items-center mb-0.5 sm:mb-1">
                         <label className="text-[10px] font-bold text-gray-600 block">
                           Payment Reference ID
                         </label>
@@ -1150,20 +1169,21 @@ export default function Profile({ user, onUpdateProfile }: ProfileProps) {
                       </div>
                       <input
                         type="text"
-                        placeholder="e.g. TX-AFKET-849201-382910"
+                        placeholder="e.g. TX-AFKET-849201"
                         value={paymentRef}
                         onChange={(e) => setPaymentRef(e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-mono font-medium focus:ring-1 focus:ring-[#D97706]"
+                        className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-lg text-xs font-mono font-medium focus:ring-1 focus:ring-[#D97706]"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-2 flex items-center justify-end space-x-3">
+                {/* Action Buttons - Distinct, High Contrast Pay & Cancel Buttons */}
+                <div className="pt-2 sm:pt-3 flex items-center justify-end space-x-2.5 sm:space-x-3">
                   <button
                     type="button"
                     onClick={() => setShowPaymentModal(false)}
-                    className="px-4 py-2.5 border border-gray-200 rounded-xl text-gray-600 font-bold text-xs hover:bg-gray-50 transition cursor-pointer"
+                    className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3.5 bg-gray-100 hover:bg-gray-200 border-2 border-gray-300 hover:border-gray-400 text-gray-800 font-extrabold text-xs sm:text-sm rounded-xl transition cursor-pointer text-center shadow-2xs"
                   >
                     Cancel
                   </button>
@@ -1172,17 +1192,17 @@ export default function Profile({ user, onUpdateProfile }: ProfileProps) {
                     type="button"
                     onClick={handleProcessPayment}
                     disabled={isProcessingPayment}
-                    className="bg-[#365314] hover:bg-[#224411] text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                    className="flex-2 sm:flex-none bg-[#365314] hover:bg-[#224411] active:scale-[0.99] disabled:opacity-60 text-white font-black text-xs sm:text-sm px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl transition shadow-md border border-lime-800 ring-2 ring-[#365314]/30 flex items-center justify-center space-x-2 cursor-pointer"
                   >
                     {isProcessingPayment ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Processing payment ({effectiveFee.toLocaleString()} MWK)...</span>
+                        <span className="truncate">Processing Payment...</span>
                       </>
                     ) : (
                       <>
-                        <Check className="h-4 w-4" />
-                        <span>Pay {effectiveFee.toLocaleString()} MWK ({selectedPlan === 'annual' ? 'Annual Plan' : 'Monthly Plan'})</span>
+                        <CreditCard className="h-4 w-4 shrink-0 text-lime-200" />
+                        <span className="truncate">Pay {effectiveFee.toLocaleString()} MWK Now</span>
                       </>
                     )}
                   </button>

@@ -212,32 +212,35 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
         <div className="space-y-2.5">
           <div 
             id="dashboard-trial-alert-banner"
-            className={`rounded-2xl p-4 sm:p-5 text-left border transition shadow-xs ${
+            className={`rounded-xl sm:rounded-2xl p-2.5 sm:p-5 text-left border transition shadow-xs ${
               subInfo.isTrialActive 
                 ? 'bg-gradient-to-r from-amber-50/90 via-[#FFFBEB] to-emerald-50/40 border-amber-300' 
                 : 'bg-gradient-to-r from-red-50 via-rose-50 to-orange-50 border-red-300'
             }`}
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-start space-x-3.5">
-                <div className={`p-2.5 rounded-xl shrink-0 mt-0.5 shadow-2xs ${
+            <div className="flex items-center justify-between gap-2 sm:gap-4">
+              <div className="flex items-center space-x-2.5 sm:space-x-3.5 min-w-0">
+                <div className={`p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl shrink-0 shadow-2xs ${
                   subInfo.isTrialActive 
                     ? 'bg-amber-100 text-amber-900 border border-amber-200' 
                     : 'bg-red-100 text-red-700 border border-red-200'
                 }`}>
                   {subInfo.isTrialActive ? (
-                    <BellRing className="h-5 w-5 animate-pulse text-[#D97706]" />
+                    <BellRing className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse text-[#D97706]" />
                   ) : (
-                    <AlertTriangle className="h-5 w-5 text-red-600 animate-bounce" />
+                    <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 animate-bounce" />
                   )}
                 </div>
-                <div className="space-y-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h4 className="text-sm font-black text-gray-900">
-                      {subInfo.isTrialActive ? 'Free Trial Period Active' : 'Trial Period Expired — Action Required'}
+                <div className="space-y-0.5 sm:space-y-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <h4 className="text-xs sm:text-sm font-black text-gray-900 truncate">
+                      <span className="sm:hidden">Free Trial Period</span>
+                      <span className="hidden sm:inline">
+                        {subInfo.isTrialActive ? 'Free Trial Period Active' : 'Trial Period Expired — Action Required'}
+                      </span>
                     </h4>
                     {user.role !== 'buyer' && (
-                      <>
+                      <div className="hidden sm:flex items-center gap-2">
                         <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border ${
                           subInfo.isTrialActive 
                             ? 'bg-emerald-100 text-emerald-900 border-emerald-300' 
@@ -251,10 +254,10 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                         <span className="text-[10px] font-mono font-bold text-[#365314] bg-lime-100 px-2 py-0.5 rounded-md border border-lime-200">
                           {subInfo.tierLabel}
                         </span>
-                      </>
+                      </div>
                     )}
                   </div>
-                  <p className="text-xs text-gray-700 leading-relaxed font-medium">
+                  <p className="hidden sm:block text-xs text-gray-700 leading-relaxed font-medium">
                     {user.role === 'buyer' ? (
                       subInfo.isTrialActive ? (
                         <>
@@ -286,17 +289,18 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   id="btn-dashboard-pay-subscription"
                   onClick={() => setCurrentTab('profile')}
-                  className={`text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-2xs flex items-center space-x-1.5 cursor-pointer whitespace-nowrap ${
+                  className={`text-xs font-bold px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-xl transition shadow-2xs flex items-center space-x-1 sm:space-x-1.5 cursor-pointer whitespace-nowrap ${
                     subInfo.isTrialActive
                       ? 'bg-[#365314] hover:bg-[#224411] text-white'
                       : 'bg-red-600 hover:bg-red-700 text-white'
                   }`}
                 >
-                  <span>{subInfo.isTrialActive ? 'Pay Monthly / Annual Plan' : 'Pay Now & Activate Account'}</span>
+                  <span className="sm:hidden">Subscribe</span>
+                  <span className="hidden sm:inline">{subInfo.isTrialActive ? 'Pay Monthly / Annual Plan' : 'Pay Now & Activate Account'}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -306,18 +310,18 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
       )}
 
       {/* Welcome Banner */}
-      <div className="bg-[#1F2937] text-white p-6 sm:p-8 rounded-3xl relative overflow-hidden border border-gray-800 shadow-sm">
+      <div className="bg-[#1F2937] text-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl relative overflow-hidden border border-gray-800 shadow-sm">
         {/* Aesthetic design grids */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#D97706]/20 via-[#1F2937] to-[#1F2937] z-0"></div>
         <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#FAF9F6_1px,transparent_1px)] [background-size:20px_20px] z-0"></div>
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
           <div className="text-left">
-            <span className="text-xs uppercase font-mono tracking-widest text-[#D97706] font-bold">AFKET Commerce Hub</span>
-            <h1 className="text-3xl sm:text-4xl font-sans font-black tracking-tight mt-1">
+            <span className="text-[10px] sm:text-xs uppercase font-mono tracking-widest text-[#D97706] font-bold">AFKET Commerce Hub</span>
+            <h1 className="text-2xl sm:text-4xl font-sans font-black tracking-tight mt-1">
               Welcome, {user.fullName}!
             </h1>
-            <p className="text-gray-300 text-sm sm:text-base mt-2 max-w-xl font-medium">
+            <p className="text-gray-300 text-xs sm:text-base mt-1.5 sm:mt-2 max-w-xl font-medium">
               {user.role === 'seller' && "Manage your agriculture cooperative, monitor export sales, and match logistics carriers in real time."}
               {user.role === 'buyer' && "Source unrefined shea butter, cocoa beans, or local grains straight from verified cooperatives."}
               {user.role === 'logistics_provider' && "Provide freight routes, accept agricultural transportation jobs, and secure premium transit quotes."}
@@ -332,7 +336,7 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                   localStorage.setItem('afket_add_product_straight', 'true');
                   setCurrentTab('marketplace');
                 }} 
-                className="bg-[#D97706] hover:bg-[#b45309] active:bg-amber-800 text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow-md flex items-center cursor-pointer"
+                className="bg-[#D97706] hover:bg-[#b45309] active:bg-amber-800 text-white font-bold text-xs px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl transition shadow-md flex items-center cursor-pointer"
               >
                 <PlusCircle className="h-4 w-4 mr-1.5" />
                 Add Product Listing
@@ -342,7 +346,7 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
               <button 
                 id="dash-browse"
                 onClick={() => setCurrentTab('marketplace')} 
-                className="bg-[#D97706] hover:bg-[#b45309] active:bg-amber-800 text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow-md flex items-center cursor-pointer"
+                className="bg-[#D97706] hover:bg-[#b45309] active:bg-amber-800 text-white font-bold text-xs px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl transition shadow-md flex items-center cursor-pointer"
               >
                 Browse Marketplace
                 <ArrowUpRight className="h-4 w-4 ml-1.5" />
@@ -352,7 +356,7 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
               <button 
                 id="dash-routes"
                 onClick={() => setCurrentTab('logistics')} 
-                className="bg-[#D97706] hover:bg-[#b45309] active:bg-amber-800 text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow-md flex items-center cursor-pointer"
+                className="bg-[#D97706] hover:bg-[#b45309] active:bg-amber-800 text-white font-bold text-xs px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl transition shadow-md flex items-center cursor-pointer"
               >
                 Explore Open Cargo
                 <ArrowUpRight className="h-4 w-4 ml-1.5" />
@@ -362,15 +366,15 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
         </div>
       </div>
 
-      {/* KPI Stats Block (Bento Grid Card Design) */}
+      {/* KPI Stats Block (2-Column Grid on Mobile to Conserve Space) */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-white border border-gray-100 rounded-3xl p-5 animate-pulse h-28"></div>
+            <div key={i} className="bg-white border border-gray-100 rounded-2xl sm:rounded-3xl p-3 sm:p-5 animate-pulse h-20 sm:h-28"></div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
           {kpis.map((kpi, index) => {
             const Icon = kpi.icon;
             
@@ -381,28 +385,28 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
 
             if (index === 0) {
               // Primary Highlight Card (Amber/Gold block)
-              cardClass = "bg-[#D97706] text-white rounded-3xl p-6 shadow-sm flex flex-col justify-between";
-              labelClass = "text-[10px] font-bold uppercase tracking-widest text-white/80";
-              valClass = "text-3xl font-black mt-2 text-white";
-              iconBoxClass = "p-3 rounded-2xl bg-white/20 text-white";
+              cardClass = "bg-[#D97706] text-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xs flex flex-col justify-between";
+              labelClass = "text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white/80 line-clamp-1";
+              valClass = "text-lg sm:text-2xl md:text-3xl font-black mt-1 sm:mt-2 text-white truncate";
+              iconBoxClass = "p-1.5 sm:p-3 rounded-lg sm:rounded-2xl bg-white/20 text-white shrink-0";
             } else if (index === 1) {
               // Accent Soft Yellow
-              cardClass = "bg-[#FFFBEB] border border-[#FEF3C7] rounded-3xl p-6 shadow-sm text-amber-900 flex flex-col justify-between";
-              labelClass = "text-[10px] font-bold uppercase tracking-widest text-amber-800/80";
-              valClass = "text-3xl font-black mt-2 text-[#D97706]";
-              iconBoxClass = "p-3 rounded-2xl bg-amber-100 text-[#D97706]";
+              cardClass = "bg-[#FFFBEB] border border-[#FEF3C7] rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xs text-amber-900 flex flex-col justify-between";
+              labelClass = "text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-amber-800/80 line-clamp-1";
+              valClass = "text-lg sm:text-2xl md:text-3xl font-black mt-1 sm:mt-2 text-[#D97706] truncate";
+              iconBoxClass = "p-1.5 sm:p-3 rounded-lg sm:rounded-2xl bg-amber-100 text-[#D97706] shrink-0";
             } else if (index === 2) {
               // Accent Olive/Light Green
-              cardClass = "bg-[#ECFCCB] border border-[#ECFCCB] rounded-3xl p-6 shadow-sm text-[#365314] flex flex-col justify-between";
-              labelClass = "text-[10px] font-bold uppercase tracking-widest text-[#365314]/80";
-              valClass = "text-3xl font-black mt-2 text-[#365314]";
-              iconBoxClass = "p-3 rounded-2xl bg-white/50 text-[#365314]";
+              cardClass = "bg-[#ECFCCB] border border-[#ECFCCB] rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xs text-[#365314] flex flex-col justify-between";
+              labelClass = "text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#365314]/80 line-clamp-1";
+              valClass = "text-lg sm:text-2xl md:text-3xl font-black mt-1 sm:mt-2 text-[#365314] truncate";
+              iconBoxClass = "p-1.5 sm:p-3 rounded-lg sm:rounded-2xl bg-white/50 text-[#365314] shrink-0";
             } else {
               // Dark Slate Card
-              cardClass = "bg-[#1F2937] text-white border border-gray-800 rounded-3xl p-6 shadow-sm flex flex-col justify-between";
-              labelClass = "text-[10px] font-bold uppercase tracking-widest text-gray-400";
-              valClass = "text-3xl font-black mt-2 text-white";
-              iconBoxClass = "p-3 rounded-2xl bg-gray-700 text-gray-200";
+              cardClass = "bg-[#1F2937] text-white border border-gray-800 rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xs flex flex-col justify-between";
+              labelClass = "text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400 line-clamp-1";
+              valClass = "text-lg sm:text-2xl md:text-3xl font-black mt-1 sm:mt-2 text-white truncate";
+              iconBoxClass = "p-1.5 sm:p-3 rounded-lg sm:rounded-2xl bg-gray-700 text-gray-200 shrink-0";
             }
 
             return (
@@ -413,13 +417,13 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                 transition={{ duration: 0.3, delay: index * 0.08 }}
                 className={`${cardClass} hover:scale-[1.01] transition-all duration-300 text-left`}
               >
-                <div className="flex justify-between items-start w-full">
-                  <div>
-                    <p className={labelClass}>{kpi.label}</p>
+                <div className="flex justify-between items-start w-full gap-1.5">
+                  <div className="min-w-0 flex-1">
+                    <p className={labelClass} title={kpi.label}>{kpi.label}</p>
                     <p className={valClass}>{kpi.value}</p>
                   </div>
                   <div className={iconBoxClass}>
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                   </div>
                 </div>
               </motion.div>
@@ -584,7 +588,7 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                             onClick={() => handleOpenPitchModal(sel.businessName || sel.fullName, 'seller')}
                             className="mt-3 sm:mt-0 text-xs bg-[#D97706] hover:bg-[#b45309] text-white font-bold px-3.5 py-2 rounded-xl transition cursor-pointer self-start sm:self-center"
                           >
-                            Pitch 
+                            Pitch Express Freight
                           </button>
                         </div>
                       ))
@@ -618,7 +622,7 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                             onClick={() => handleOpenPitchModal(byr.businessName || byr.fullName, 'buyer')}
                             className="mt-3 sm:mt-0 text-xs bg-[#365314] hover:bg-[#224411] text-white font-bold px-3.5 py-2 rounded-xl transition cursor-pointer self-start sm:self-center"
                           >
-                            Pitch them
+                            Offer Transit Lane
                           </button>
                         </div>
                       ))
@@ -660,12 +664,9 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                         onChange={(e) => setQuoteOrigin(e.target.value)}
                         className="w-full bg-[#FAF9F6] border border-gray-100 rounded-xl px-3 py-2 text-xs text-gray-800 focus:outline-hidden focus:ring-2 focus:ring-[#D97706]"
                       >
-                        <option value="Lilongwe">Lilongwe</option>
-                        <option value="Blantyre">Blantyre</option>
-                        <option value="Zomba">Zomba</option>
-                        <option value="Mzuzu">Mzuzu</option>
-                        <option value="Salima">Salima</option>
-                        <option value="Neno">Neno</option>
+                        <option value="Kumasi, Ghana">Kumasi, Ghana</option>
+                        <option value="Bobo-Dioulasso, Burkina Faso">Bobo-Dioulasso, BF</option>
+                        <option value="Sunyani, Ghana">Sunyani, Ghana</option>
                       </select>
                     </div>
                     <div>
@@ -675,12 +676,6 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                         onChange={(e) => setQuoteDest(e.target.value)}
                         className="w-full bg-[#FAF9F6] border border-gray-100 rounded-xl px-3 py-2 text-xs text-gray-800 focus:outline-hidden focus:ring-2 focus:ring-[#D97706]"
                       >
-                        <option value="Lilongwe">Lilongwe</option>
-                        <option value="Blantyre">Blantyre</option>
-                        <option value="Zomba">Zomba</option>
-                        <option value="Mzuzu">Mzuzu</option>
-                        <option value="Salima">Salima</option>
-                        <option value="Neno">Neno</option>
                         <option value="Nairobi, Kenya">Nairobi, Kenya</option>
                         <option value="Lagos, Nigeria">Lagos, Nigeria</option>
                         <option value="Mombasa Port, Kenya">Mombasa Port, Kenya</option>

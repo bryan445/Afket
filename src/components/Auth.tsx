@@ -121,6 +121,8 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
     if (regStep === 1) {
       setRegStep(2);
     } else if (regStep === 2) {
+      setRegStep(3);
+    } else if (regStep === 3) {
       if (!email.trim()) {
         setError('Please enter your email address.');
         return;
@@ -137,8 +139,8 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
         setError('Password must be at least 6 characters long.');
         return;
       }
-      setRegStep(3);
-    } else if (regStep === 3) {
+      setRegStep(4);
+    } else if (regStep === 4) {
       if (!firstName.trim()) {
         setError('Please enter your First Name.');
         return;
@@ -147,7 +149,7 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
         setError('Please enter your Surname.');
         return;
       }
-      setRegStep(4);
+      setRegStep(5);
     }
   };
 
@@ -440,13 +442,53 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#FAF9F6] font-sans">
-      {/* Banner / Left Side */}
-      <div className="md:w-5/12 bg-[#1F2937] text-white p-8 md:p-14 flex flex-col justify-between relative overflow-hidden">
+    <div className="min-h-screen flex flex-row bg-[#FAF9F6] font-sans">
+      {/* Banner / Left Side (The Bar) - Side-by-Side on all screen sizes including mobile phones */}
+      <div className="w-14 xs:w-16 sm:w-20 md:w-5/12 shrink-0 bg-[#1F2937] text-white p-2.5 xs:p-3 sm:p-5 md:p-14 flex flex-col justify-between relative overflow-hidden border-r border-gray-800 shadow-sm">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#365314]/50 via-[#1F2937] to-[#111827] z-0"></div>
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] z-0"></div>
 
-        <div className="relative z-10 text-left">
+        {/* Mobile Compact Branding Bar (visible < md) */}
+        <div className="relative z-10 md:hidden flex flex-col items-center justify-between h-full py-2">
+          {/* Logo & Brand */}
+          <div className="flex flex-col items-center gap-1.5">
+            <img 
+              src={afketLogo} 
+              alt="AFKET Logo" 
+              className="h-8 w-8 xs:h-9 xs:w-9 sm:h-11 sm:w-11 rounded-full border border-amber-500/30 shadow-md"
+              referrerPolicy="no-referrer"
+            />
+            <span className="font-sans font-black text-[11px] xs:text-xs tracking-tight text-white">
+              AF<span className="text-[#D97706]">KET</span>
+            </span>
+          </div>
+
+          {/* Trade Network Feature Icons */}
+          <div className="my-auto flex flex-col items-center gap-3.5 py-4">
+            <div className="p-2 rounded-xl bg-white/10 text-amber-400 shadow-2xs" title="African Agriculture Trade">
+              <Sprout className="h-4 w-4" />
+            </div>
+            <div className="p-2 rounded-xl bg-white/10 text-emerald-400 shadow-2xs" title="Verified Trade Counterparties">
+              <ShieldCheck className="h-4 w-4" />
+            </div>
+            <div className="p-2 rounded-xl bg-white/10 text-sky-400 shadow-2xs" title="Freight & Haulage Dispatch">
+              <Truck className="h-4 w-4" />
+            </div>
+            <div className="p-2 rounded-xl bg-white/10 text-amber-300 shadow-2xs" title="Direct Farm Sourcing">
+              <Globe className="h-4 w-4" />
+            </div>
+          </div>
+
+          {/* Bottom badge */}
+          <div className="flex flex-col items-center">
+            <span className="text-[8px] font-mono uppercase tracking-widest text-[#D97706] font-bold text-center">
+              AFRICA
+            </span>
+          </div>
+        </div>
+
+        {/* Desktop Detailed Branding (visible >= md) */}
+        <div className="relative z-10 text-left hidden md:block">
           <div className="flex items-center space-x-3 mb-10">
             <img 
               src={afketLogo} 
@@ -468,7 +510,7 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
           </p>
         </div>
 
-        <div className="relative z-10 pt-8 border-t border-white/10 mt-8 text-left">
+        <div className="relative z-10 pt-8 border-t border-white/10 mt-8 text-left hidden md:block">
           <span className="text-[#D97706] font-mono text-[10px] uppercase tracking-wider block mb-3 font-bold">🌍 Network Trade Verification</span>
           <div className="space-y-3 font-medium">
             <div className="flex items-start space-x-2.5 text-xs text-gray-300">
@@ -496,10 +538,10 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
         </div>
       </div>
 
-      {/* Right Side - Form */}
-      <div className="md:w-7/12 flex items-center justify-center p-4 sm:p-8 md:p-12">
+      {/* Right Side - Form (The Open Account Site) */}
+      <div className="flex-1 min-w-0 flex items-center justify-center p-2.5 xs:p-4 sm:p-8 md:p-12">
         <div className="w-full max-w-lg">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-gray-100 shadow-sm">
             {registrationPending ? (
               <div className="py-2 text-left">
                 <div className="flex items-center space-x-4 mb-6">
@@ -752,64 +794,7 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                   </div>
                 ) : null}
 
-                {/* REGISTRATION FLASH CARD STEP INDICATOR (4 STEPS) */}
-                {!isLogin && (
-                  <div className="mb-6 text-left">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-mono font-bold text-[#D97706] uppercase tracking-wider">
-                        Step {regStep} of 4: {
-                          regStep === 1 ? 'Trade Role & Entity' :
-                          regStep === 2 ? 'Credentials' :
-                          regStep === 3 ? 'Personal Info' :
-                          'Location & Logo'
-                        }
-                      </span>
-                      <span className="text-xs font-bold text-gray-400">
-                        {Math.round((regStep / 4) * 100)}% Completed
-                      </span>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-3">
-                      <motion.div
-                        className="bg-[#D97706] h-full rounded-full"
-                        initial={{ width: '25%' }}
-                        animate={{ width: `${(regStep / 4) * 100}%` }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    </div>
-
-                    {/* Step Chips */}
-                    <div className="grid grid-cols-4 gap-1.5">
-                      {[
-                        { num: 1, name: 'Role' },
-                        { num: 2, name: 'Account' },
-                        { num: 3, name: 'Details' },
-                        { num: 4, name: 'Location' }
-                      ].map((s) => (
-                        <button
-                          key={s.num}
-                          type="button"
-                          disabled={s.num > regStep}
-                          onClick={() => {
-                            if (s.num < regStep) setRegStep(s.num);
-                          }}
-                          className={`flex items-center justify-center space-x-1 py-1.5 px-1 rounded-lg text-[10px] font-bold transition border ${
-                            s.num === regStep
-                              ? 'bg-[#D97706] text-white border-[#D97706] shadow-2xs'
-                              : s.num < regStep
-                              ? 'bg-amber-50 text-[#92400E] border-amber-200 hover:bg-amber-100 cursor-pointer'
-                              : 'bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed'
-                          }`}
-                        >
-                          <span>{s.num < regStep ? '✓' : s.num}.</span>
-                          <span className="truncate">{s.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
+                {/* REGISTRATION FORM */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {/* FORGOT PASSWORD VIEW */}
                   {isLogin && isForgotPasswordMode && (
@@ -1313,7 +1298,7 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                   {/* REGISTRATION STEP FLASH CARDS (1 to 5) */}
                   {!isLogin && (
                     <AnimatePresence mode="wait">
-                      {/* FLASHCARD STEP 1: ENTITY INQUIRY & TRADE ROLE */}
+                      {/* FLASHCARD STEP 1: TYPE OF ACCOUNT */}
                       {regStep === 1 && (
                         <motion.div
                           key="flashcard-step-1"
@@ -1323,50 +1308,44 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                           transition={{ duration: 0.2 }}
                           className="space-y-4 text-left"
                         >
-                          <div className="bg-amber-50/40 border border-amber-200/50 rounded-2xl p-4 sm:p-5 space-y-4">
-                            {/* INQUIRY 1: ENTITY CLASSIFICATION */}
+                          <div className="bg-amber-50/40 border border-amber-200/50 rounded-2xl p-3 sm:p-5 space-y-3 sm:space-y-4">
                             <div>
-                              <div className="flex items-center justify-between mb-1.5">
-                                <label className="text-xs font-black text-gray-900 uppercase tracking-wider block">
-                                  1. Are you registering as an Individual or Company / Business?
-                                </label>
-                                <span className="text-[10px] font-bold text-[#92400E] bg-amber-200/70 px-2 py-0.5 rounded-md uppercase">
-                                  Account Type
-                                </span>
-                              </div>
-                              <p className="text-xs text-gray-500 mb-3">
+                              <label className="text-[11px] sm:text-xs font-black text-gray-900 uppercase tracking-wider block mb-1">
+                                Select Type of Account
+                              </label>
+                              <p className="text-[11px] sm:text-xs text-gray-500 mb-2.5 sm:mb-3">
                                 Please specify whether this is a personal trader account or an officially registered commercial business / union.
                               </p>
 
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                                 {/* Individual Account Option */}
                                 <button
                                   id="account-type-individual"
                                   type="button"
                                   onClick={() => setAccountType('individual')}
-                                  className={`p-3.5 rounded-2xl border text-left transition cursor-pointer relative ${
+                                  className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition cursor-pointer relative ${
                                     accountType === 'individual'
                                       ? 'border-[#D97706] bg-white ring-2 ring-[#D97706]/20 shadow-xs'
                                       : 'border-gray-200 bg-white/70 hover:bg-white text-gray-600'
                                   }`}
                                 >
-                                  <div className="flex items-start justify-between mb-1.5">
+                                  <div className="flex items-start justify-between mb-1 sm:mb-1.5">
                                     <div className="flex items-center space-x-2">
-                                      <div className={`p-1.5 rounded-lg ${accountType === 'individual' ? 'bg-amber-100 text-[#D97706]' : 'bg-gray-100 text-gray-500'}`}>
-                                        <User className="h-4 w-4" />
+                                      <div className={`p-1 sm:p-1.5 rounded-lg ${accountType === 'individual' ? 'bg-amber-100 text-[#D97706]' : 'bg-gray-100 text-gray-500'}`}>
+                                        <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                       </div>
                                       <div>
-                                        <span className="font-black text-sm text-gray-900 block">Individual Account</span>
-                                        <span className="text-[10px] text-gray-400 font-semibold uppercase">Personal / Solo Trader</span>
+                                        <span className="font-black text-xs sm:text-sm text-gray-900 block leading-tight">Individual Account</span>
+                                        <span className="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Personal / Solo Trader</span>
                                       </div>
                                     </div>
                                     {accountType === 'individual' && (
-                                      <span className="h-5 w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                                      <span className="h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-[9px] sm:text-[10px] font-bold shrink-0">
                                         ✓
                                       </span>
                                     )}
                                   </div>
-                                  <p className="text-[11px] text-gray-500 leading-snug font-medium">
+                                  <p className="text-[10px] sm:text-[11px] text-gray-500 leading-tight sm:leading-snug font-medium">
                                     For individual farmers, solo traders, independent aggregators, or individual hauliers.
                                   </p>
                                 </button>
@@ -1376,67 +1355,89 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                   id="account-type-company"
                                   type="button"
                                   onClick={() => setAccountType('company')}
-                                  className={`p-3.5 rounded-2xl border text-left transition cursor-pointer relative ${
+                                  className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition cursor-pointer relative ${
                                     accountType === 'company'
                                       ? 'border-[#D97706] bg-white ring-2 ring-[#D97706]/20 shadow-xs'
                                       : 'border-gray-200 bg-white/70 hover:bg-white text-gray-600'
                                   }`}
                                 >
-                                  <div className="flex items-start justify-between mb-1.5">
+                                  <div className="flex items-start justify-between mb-1 sm:mb-1.5">
                                     <div className="flex items-center space-x-2">
-                                      <div className={`p-1.5 rounded-lg ${accountType === 'company' ? 'bg-amber-100 text-[#D97706]' : 'bg-gray-100 text-gray-500'}`}>
-                                        <Building2 className="h-4 w-4" />
+                                      <div className={`p-1 sm:p-1.5 rounded-lg ${accountType === 'company' ? 'bg-amber-100 text-[#D97706]' : 'bg-gray-100 text-gray-500'}`}>
+                                        <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                       </div>
                                       <div>
-                                        <span className="font-black text-sm text-gray-900 block">Company / Business</span>
-                                        <span className="text-[10px] text-gray-400 font-semibold uppercase">Corporate / Cooperative</span>
+                                        <span className="font-black text-xs sm:text-sm text-gray-900 block leading-tight">Company / Business</span>
+                                        <span className="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase">Corporate / Cooperative</span>
                                       </div>
                                     </div>
                                     {accountType === 'company' && (
-                                      <span className="h-5 w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                                      <span className="h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-[9px] sm:text-[10px] font-bold shrink-0">
                                         ✓
                                       </span>
                                     )}
                                   </div>
-                                  <p className="text-[11px] text-gray-500 leading-snug font-medium">
+                                  <p className="text-[10px] sm:text-[11px] text-gray-500 leading-tight sm:leading-snug font-medium">
                                     For registered agribusinesses, cooperative unions, processors, commercial buyers & fleet companies.
                                   </p>
                                 </button>
                               </div>
                             </div>
+                          </div>
 
-                            {/* INQUIRY 2: PRIMARY TRADE ROLE */}
-                            <div className="pt-3 border-t border-amber-200/60">
-                              <label className="text-xs font-black text-gray-900 uppercase tracking-wider block mb-1">
-                                2. Select Primary Trade Role
+                          <button
+                            type="button"
+                            onClick={nextStep}
+                            className="w-full bg-[#D97706] hover:bg-[#b45309] text-white font-bold py-2.5 sm:py-3.5 px-4 rounded-xl shadow-xs transition flex items-center justify-center space-x-2 text-xs sm:text-sm cursor-pointer mt-1 sm:mt-2"
+                          >
+                            <span>Next: Select Primary Role</span>
+                            <ChevronRight className="h-4 w-4" />
+                          </button>
+                        </motion.div>
+                      )}
+
+                      {/* FLASHCARD STEP 2: PRIMARY TRADE ROLE */}
+                      {regStep === 2 && (
+                        <motion.div
+                          key="flashcard-step-2"
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.2 }}
+                          className="space-y-3 sm:space-y-4 text-left"
+                        >
+                          <div className="bg-amber-50/40 border border-amber-200/50 rounded-2xl p-3 sm:p-5 space-y-3 sm:space-y-4">
+                            <div>
+                              <label className="text-[11px] sm:text-xs font-black text-gray-900 uppercase tracking-wider block mb-1">
+                                Select Primary Trade Role
                               </label>
-                              <p className="text-xs text-gray-500 mb-3">
+                              <p className="text-[11px] sm:text-xs text-gray-500 mb-2.5 sm:mb-3">
                                 Choose the primary activity you will be conducting on the AFKET trade network.
                               </p>
 
-                              <div className="grid grid-cols-1 gap-2.5">
+                              <div className="grid grid-cols-1 gap-2 sm:gap-2.5">
                                 {/* Buyer Card */}
                                 <button
                                   id="role-buyer"
                                   type="button"
                                   onClick={() => setRole('buyer')}
-                                  className={`p-3.5 rounded-2xl border text-left transition cursor-pointer relative flex items-center justify-between ${
+                                  className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition cursor-pointer relative flex items-center justify-between ${
                                     role === 'buyer'
                                       ? 'border-[#D97706] bg-white ring-2 ring-[#D97706]/20 shadow-xs'
                                       : 'border-gray-200 bg-white/80 hover:bg-white text-gray-600'
                                   }`}
                                 >
-                                  <div className="flex items-center space-x-3">
-                                    <span className="text-2xl p-2 rounded-xl bg-amber-100/60">🛒</span>
-                                    <div>
-                                      <span className="block font-black text-sm text-gray-900">Buyer / Commodity Offtaker</span>
-                                      <span className="text-xs text-gray-500 block leading-tight">
-                                        Source bulk agricultural crops, compare specifications, and request haulage
+                                  <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0 pr-2">
+                                    <span className="text-xl sm:text-2xl p-1.5 sm:p-2 rounded-xl bg-amber-100/60 shrink-0">🛒</span>
+                                    <div className="min-w-0">
+                                      <span className="block font-black text-xs sm:text-sm text-gray-900 leading-tight">Buyer / Commodity Offtaker</span>
+                                      <span className="text-[10px] sm:text-xs text-gray-500 block leading-tight truncate sm:whitespace-normal">
+                                        Source bulk crops, compare specs, request haulage
                                       </span>
                                     </div>
                                   </div>
                                   {role === 'buyer' && (
-                                    <span className="h-5 w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                                    <span className="h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0">
                                       ✓
                                     </span>
                                   )}
@@ -1447,23 +1448,23 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                   id="role-seller"
                                   type="button"
                                   onClick={() => setRole('seller')}
-                                  className={`p-3.5 rounded-2xl border text-left transition cursor-pointer relative flex items-center justify-between ${
+                                  className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition cursor-pointer relative flex items-center justify-between ${
                                     role === 'seller'
                                       ? 'border-[#D97706] bg-white ring-2 ring-[#D97706]/20 shadow-xs'
                                       : 'border-gray-200 bg-white/80 hover:bg-white text-gray-600'
                                   }`}
                                 >
-                                  <div className="flex items-center space-x-3">
-                                    <span className="text-2xl p-2 rounded-xl bg-emerald-100/60">🌾</span>
-                                    <div>
-                                      <span className="block font-black text-sm text-gray-900">Seller / Producer / Cooperative</span>
-                                      <span className="text-xs text-gray-500 block leading-tight">
-                                        List crop harvests, set pricing & moisture specs, and receive purchase orders
+                                  <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0 pr-2">
+                                    <span className="text-xl sm:text-2xl p-1.5 sm:p-2 rounded-xl bg-emerald-100/60 shrink-0">🌾</span>
+                                    <div className="min-w-0">
+                                      <span className="block font-black text-xs sm:text-sm text-gray-900 leading-tight">Seller / Producer / Cooperative</span>
+                                      <span className="text-[10px] sm:text-xs text-gray-500 block leading-tight truncate sm:whitespace-normal">
+                                        List crop harvests, set pricing specs, get orders
                                       </span>
                                     </div>
                                   </div>
                                   {role === 'seller' && (
-                                    <span className="h-5 w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                                    <span className="h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0">
                                       ✓
                                     </span>
                                   )}
@@ -1474,23 +1475,23 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                   id="role-logistics"
                                   type="button"
                                   onClick={() => setRole('logistics_provider')}
-                                  className={`p-3.5 rounded-2xl border text-left transition cursor-pointer relative flex items-center justify-between ${
+                                  className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition cursor-pointer relative flex items-center justify-between ${
                                     role === 'logistics_provider'
                                       ? 'border-[#D97706] bg-white ring-2 ring-[#D97706]/20 shadow-xs'
                                       : 'border-gray-200 bg-white/80 hover:bg-white text-gray-600'
                                   }`}
                                 >
-                                  <div className="flex items-center space-x-3">
-                                    <span className="text-2xl p-2 rounded-xl bg-blue-100/60">🚚</span>
-                                    <div>
-                                      <span className="block font-black text-sm text-gray-900">Logistics Carrier & Haulage Operator</span>
-                                      <span className="text-xs text-gray-500 block leading-tight">
-                                        Browse freight requests, submit haulage bids, and track shipping assignments
+                                  <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0 pr-2">
+                                    <span className="text-xl sm:text-2xl p-1.5 sm:p-2 rounded-xl bg-blue-100/60 shrink-0">🚚</span>
+                                    <div className="min-w-0">
+                                      <span className="block font-black text-xs sm:text-sm text-gray-900 leading-tight">Logistics Carrier & Haulage</span>
+                                      <span className="text-[10px] sm:text-xs text-gray-500 block leading-tight truncate sm:whitespace-normal">
+                                        Browse freight requests & submit haulage bids
                                       </span>
                                     </div>
                                   </div>
                                   {role === 'logistics_provider' && (
-                                    <span className="h-5 w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                                    <span className="h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-[#D97706] text-white flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0">
                                       ✓
                                     </span>
                                   )}
@@ -1499,86 +1500,11 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                             </div>
                           </div>
 
-                          <button
-                            type="button"
-                            onClick={nextStep}
-                            className="w-full bg-[#D97706] hover:bg-[#b45309] text-white font-bold py-3.5 px-4 rounded-xl shadow-xs transition flex items-center justify-center space-x-2 text-sm cursor-pointer mt-2"
-                          >
-                            <span>Next: Set Credentials</span>
-                            <ChevronRight className="h-4 w-4" />
-                          </button>
-                        </motion.div>
-                      )}
-
-                      {/* FLASHCARD STEP 2: CREDENTIALS */}
-                      {regStep === 2 && (
-                        <motion.div
-                          key="flashcard-step-2"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -20 }}
-                          transition={{ duration: 0.2 }}
-                          className="space-y-4 text-left"
-                        >
-                          <div className="bg-[#FAF9F6] border border-gray-200/80 rounded-2xl p-4 space-y-4">
-                            <div>
-                              <label className="text-xs font-bold text-gray-700 block mb-1">
-                                Email Address <span className="text-red-500">*</span>
-                              </label>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                  <Mail className="h-4 w-4" />
-                                </div>
-                                <input
-                                  id="auth-email"
-                                  type="email"
-                                  placeholder="e.g. trader@company.com"
-                                  value={email}
-                                  onChange={(e) => setEmail(e.target.value)}
-                                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
-                                  required
-                                />
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className="flex items-center justify-between mb-1">
-                                <label className="text-xs font-bold text-gray-700 block">
-                                  Password <span className="text-red-500">*</span>
-                                </label>
-                                <span className="text-[10px] font-mono font-medium text-gray-400">
-                                  Min. 6 characters
-                                </span>
-                              </div>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                                  <Lock className="h-4 w-4" />
-                                </div>
-                                <input
-                                  id="auth-password"
-                                  type={showPassword ? 'text' : 'password'}
-                                  placeholder="••••••••"
-                                  value={password}
-                                  onChange={(e) => setPassword(e.target.value)}
-                                  className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
-                                  required
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => setShowPassword(!showPassword)}
-                                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition cursor-pointer"
-                                >
-                                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center space-x-3 pt-1">
+                          <div className="flex items-center space-x-2 sm:space-x-3 pt-0.5 sm:pt-1">
                             <button
                               type="button"
                               onClick={prevStep}
-                              className="px-4 py-3.5 border border-gray-200 rounded-xl text-gray-700 font-bold text-xs hover:bg-gray-50 transition cursor-pointer flex items-center space-x-1"
+                              className="px-3 sm:px-4 py-2.5 sm:py-3.5 border border-gray-200 rounded-xl text-gray-700 font-bold text-xs hover:bg-gray-50 transition cursor-pointer flex items-center space-x-1"
                             >
                               <ChevronLeft className="h-4 w-4" />
                               <span>Back</span>
@@ -1586,7 +1512,92 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                             <button
                               type="button"
                               onClick={nextStep}
-                              className="flex-1 bg-[#D97706] hover:bg-[#b45309] text-white font-bold py-3.5 px-4 rounded-xl shadow-xs transition flex items-center justify-center space-x-2 text-sm cursor-pointer"
+                              className="flex-1 bg-[#D97706] hover:bg-[#b45309] text-white font-bold py-2.5 sm:py-3.5 px-4 rounded-xl shadow-xs transition flex items-center justify-center space-x-2 text-xs sm:text-sm cursor-pointer"
+                            >
+                              <span>Next: Set Credentials</span>
+                              <ChevronRight className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {/* FLASHCARD STEP 3: CREDENTIALS */}
+                      {regStep === 3 && (
+                        <motion.div
+                          key="flashcard-step-3"
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.2 }}
+                          className="space-y-3 sm:space-y-4 text-left"
+                        >
+                          <div className="bg-[#FAF9F6] border border-gray-200/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-3 sm:space-y-4">
+                            <div>
+                              <label className="text-[11px] sm:text-xs font-bold text-gray-700 block mb-1">
+                                Email Address <span className="text-red-500">*</span>
+                              </label>
+                              <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                  <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                </div>
+                                <input
+                                  id="auth-email"
+                                  type="email"
+                                  placeholder="e.g. trader@company.com"
+                                  value={email}
+                                  onChange={(e) => setEmail(e.target.value)}
+                                  className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <label className="text-[11px] sm:text-xs font-bold text-gray-700 block">
+                                  Password <span className="text-red-500">*</span>
+                                </label>
+                                <span className="text-[9px] sm:text-[10px] font-mono font-medium text-gray-400">
+                                  Min. 6 characters
+                                </span>
+                              </div>
+                              <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                  <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                </div>
+                                <input
+                                  id="auth-password"
+                                  type={showPassword ? 'text' : 'password'}
+                                  placeholder="••••••••"
+                                  value={password}
+                                  onChange={(e) => setPassword(e.target.value)}
+                                  className="w-full pl-8 sm:pl-10 pr-9 sm:pr-10 py-2 sm:py-3 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
+                                  required
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition cursor-pointer"
+                                >
+                                  {showPassword ? <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-2 sm:space-x-3 pt-0.5 sm:pt-1">
+                            <button
+                              type="button"
+                              onClick={prevStep}
+                              className="px-3 sm:px-4 py-2.5 sm:py-3.5 border border-gray-200 rounded-xl text-gray-700 font-bold text-xs hover:bg-gray-50 transition cursor-pointer flex items-center space-x-1"
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                              <span>Back</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={nextStep}
+                              className="flex-1 bg-[#D97706] hover:bg-[#b45309] text-white font-bold py-2.5 sm:py-3.5 px-4 rounded-xl shadow-xs transition flex items-center justify-center space-x-2 text-xs sm:text-sm cursor-pointer"
                             >
                               <span>Next: Personal Details</span>
                               <ChevronRight className="h-4 w-4" />
@@ -1595,25 +1606,25 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                         </motion.div>
                       )}
 
-                      {/* FLASHCARD STEP 3: PERSONAL & BUSINESS DETAILS */}
-                      {regStep === 3 && (
+                      {/* FLASHCARD STEP 4: PERSONAL & BUSINESS DETAILS */}
+                      {regStep === 4 && (
                         <motion.div
-                          key="flashcard-step-3"
+                          key="flashcard-step-4"
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.2 }}
-                          className="space-y-4 text-left"
+                          className="space-y-3 sm:space-y-4 text-left"
                         >
-                          <div className="bg-[#FAF9F6] border border-gray-200/80 rounded-2xl p-4 space-y-3">
-                            <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-[#FAF9F6] border border-gray-200/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-2.5 sm:space-y-3">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                               <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                <label className="text-[11px] sm:text-xs font-bold text-gray-700 block mb-1">
                                   First Name <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
-                                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                    <User className="h-4 w-4" />
+                                  <div className="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                   </div>
                                   <input
                                     id="auth-firstname"
@@ -1621,18 +1632,18 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                     placeholder="e.g. Kwame"
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
+                                    className="w-full pl-8 sm:pl-9 pr-2.5 sm:pr-3 py-2 sm:py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
                                     required
                                   />
                                 </div>
                               </div>
                               <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                <label className="text-[11px] sm:text-xs font-bold text-gray-700 block mb-1">
                                   Surname <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
-                                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                    <User className="h-4 w-4" />
+                                  <div className="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                   </div>
                                   <input
                                     id="auth-surname"
@@ -1640,7 +1651,7 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                     placeholder="e.g. Mensah"
                                     value={surname}
                                     onChange={(e) => setSurname(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
+                                    className="w-full pl-8 sm:pl-9 pr-2.5 sm:pr-3 py-2 sm:py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
                                     required
                                   />
                                 </div>
@@ -1649,12 +1660,12 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
 
                             {/* Business Name Field */}
                             <div>
-                              <label className="text-xs font-bold text-gray-700 block mb-1">
+                              <label className="text-[11px] sm:text-xs font-bold text-gray-700 block mb-1">
                                 {accountType === 'company' ? 'Registered Company / Cooperative Name *' : 'Farm / Enterprise Name (Optional)'}
                               </label>
                               <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                  <Building2 className="h-4 w-4" />
+                                <div className="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none text-gray-400">
+                                  <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                 </div>
                                 <input
                                   id="auth-business"
@@ -1666,21 +1677,21 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                   }
                                   value={businessName}
                                   onChange={(e) => setBusinessName(e.target.value)}
-                                  className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
+                                  className="w-full pl-8 sm:pl-9 pr-3 sm:pr-4 py-2 sm:py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
                                 />
                               </div>
                             </div>
 
                             {/* Phone Number Input */}
                             <div>
-                              <label className="text-xs font-bold text-gray-700 block mb-1">Phone Number</label>
-                              <div className="flex gap-2">
+                              <label className="text-[11px] sm:text-xs font-bold text-gray-700 block mb-1">Phone Number</label>
+                              <div className="flex gap-1.5 sm:gap-2">
                                 <div className="w-2/5 relative">
                                   <select
                                     id="auth-country-code"
                                     value={countryCode}
                                     onChange={(e) => setCountryCode(e.target.value)}
-                                    className="w-full px-2 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium cursor-pointer text-center"
+                                    className="w-full px-1.5 sm:px-2 py-2 sm:py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-[11px] sm:text-xs focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium cursor-pointer text-center"
                                   >
                                     <option value="+265">🇲🇼 +265 (MW)</option>
                                     <option value="+234">🇳🇬 +234 (NG)</option>
@@ -1696,8 +1707,8 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                   </select>
                                 </div>
                                 <div className="flex-1 relative">
-                                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                    <Phone className="h-4 w-4" />
+                                  <div className="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                   </div>
                                   <input
                                     id="auth-phone"
@@ -1705,18 +1716,18 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                     placeholder="e.g. 999 123456"
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
-                                    className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
+                                    className="w-full pl-8 sm:pl-9 pr-3 sm:pr-4 py-2 sm:py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
                                   />
                                 </div>
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center space-x-3 pt-1">
+                          <div className="flex items-center space-x-2 sm:space-x-3 pt-0.5 sm:pt-1">
                             <button
                               type="button"
                               onClick={prevStep}
-                              className="px-4 py-3.5 border border-gray-200 rounded-xl text-gray-700 font-bold text-xs hover:bg-gray-50 transition cursor-pointer flex items-center space-x-1"
+                              className="px-3 sm:px-4 py-2.5 sm:py-3.5 border border-gray-200 rounded-xl text-gray-700 font-bold text-xs hover:bg-gray-50 transition cursor-pointer flex items-center space-x-1"
                             >
                               <ChevronLeft className="h-4 w-4" />
                               <span>Back</span>
@@ -1724,34 +1735,34 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                             <button
                               type="button"
                               onClick={nextStep}
-                              className="flex-1 bg-[#D97706] hover:bg-[#b45309] text-white font-bold py-3.5 px-4 rounded-xl shadow-xs transition flex items-center justify-center space-x-2 text-sm cursor-pointer"
+                              className="flex-1 bg-[#D97706] hover:bg-[#b45309] text-white font-bold py-2.5 sm:py-3.5 px-4 rounded-xl shadow-xs transition flex items-center justify-center space-x-2 text-xs sm:text-sm cursor-pointer"
                             >
-                              <span>Next: Location & Logo</span>
+                              <span>Next: Location & Terms</span>
                               <ChevronRight className="h-4 w-4" />
                             </button>
                           </div>
                         </motion.div>
                       )}
 
-                      {/* FLASHCARD STEP 4: LOCATION & BRAND LOGO */}
-                      {regStep === 4 && (
+                      {/* FLASHCARD STEP 5: LOCATION & BRAND LOGO & TERMS */}
+                      {regStep === 5 && (
                         <motion.div
-                          key="flashcard-step-4"
+                          key="flashcard-step-5"
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.2 }}
-                          className="space-y-4 text-left"
+                          className="space-y-3 sm:space-y-4 text-left"
                         >
-                          <div className="bg-[#FAF9F6] border border-gray-200/80 rounded-2xl p-4 space-y-3">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="bg-[#FAF9F6] border border-gray-200/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-2.5 sm:space-y-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                               <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                <label className="text-[11px] sm:text-xs font-bold text-gray-700 block mb-1">
                                   Base / City Location <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
-                                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                    <MapPin className="h-4 w-4" />
+                                  <div className="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                   </div>
                                   <input
                                     id="auth-location"
@@ -1759,25 +1770,25 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                     placeholder="e.g. Lilongwe, Malawi"
                                     value={location}
                                     onChange={(e) => setLocation(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
+                                    className="w-full pl-8 sm:pl-9 pr-2.5 sm:pr-3 py-2 sm:py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium"
                                     required
                                   />
                                 </div>
                               </div>
 
                               <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-1">
+                                <label className="text-[11px] sm:text-xs font-bold text-gray-700 block mb-1">
                                   Country / Market Base <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
-                                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                    <Globe className="h-4 w-4" />
+                                  <div className="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                   </div>
                                   <select
                                     id="auth-nationality"
                                     value={nationality}
                                     onChange={(e) => setNationality(e.target.value)}
-                                    className="w-full pl-9 pr-6 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium appearance-none cursor-pointer"
+                                    className="w-full pl-8 sm:pl-9 pr-5 sm:pr-6 py-2 sm:py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-[11px] sm:text-xs focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all font-medium appearance-none cursor-pointer"
                                     required
                                   >
                                     <option value="Malawi">Malawi (MWK)</option>
@@ -1801,24 +1812,24 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                             </div>
 
                             {/* Optional Logo Upload */}
-                            <div className="bg-white border border-gray-200 rounded-xl p-3.5 space-y-2.5">
-                              <label className="text-xs font-bold text-gray-700 block">
+                            <div className="bg-white border border-gray-200 rounded-xl p-2.5 sm:p-3.5 space-y-2 sm:space-y-2.5">
+                              <label className="text-[11px] sm:text-xs font-bold text-gray-700 block">
                                 {role === 'seller' ? 'Farm / Enterprise Logo' : role === 'logistics_provider' ? 'Logistics Fleet Logo' : 'Company Logo'}
                                 <span className="text-gray-400 font-normal ml-1">(Optional)</span>
                               </label>
                               
-                              <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 rounded-xl border border-gray-200 bg-[#FAF9F6] flex items-center justify-center overflow-hidden shrink-0 relative shadow-2xs">
+                              <div className="flex items-center space-x-2.5 sm:space-x-3">
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl border border-gray-200 bg-[#FAF9F6] flex items-center justify-center overflow-hidden shrink-0 relative shadow-2xs">
                                   {logoUrl ? (
                                     <img src={logoUrl} alt="Preview Logo" className="w-full h-full object-cover" />
                                   ) : (
-                                    <span className="text-base">{role === 'seller' ? '🌾' : role === 'logistics_provider' ? '🚚' : '🛒'}</span>
+                                    <span className="text-sm sm:text-base">{role === 'seller' ? '🌾' : role === 'logistics_provider' ? '🚚' : '🛒'}</span>
                                   )}
                                 </div>
                                 
                                 <div className="flex-1 flex items-center justify-between">
-                                  <label className="inline-flex items-center justify-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold text-xs px-3 py-1.5 rounded-lg transition cursor-pointer space-x-1.5">
-                                    <UploadCloud className="h-3.5 w-3.5 text-gray-400" />
+                                  <label className="inline-flex items-center justify-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg transition cursor-pointer space-x-1.5">
+                                    <UploadCloud className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-gray-400" />
                                     <span>{isUploadingLogo ? 'Uploading...' : 'Upload Logo'}</span>
                                     <input
                                       type="file"
@@ -1842,40 +1853,40 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                           </div>
 
                           {/* AFKET Platform Terms & Usage Policy Summary Card */}
-                          <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3">
-                            <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                              <div className="flex items-center space-x-2">
-                                <ShieldCheck className="h-4 w-4 text-[#365314]" />
-                                <span className="text-xs font-black text-gray-900 uppercase tracking-wider">
+                          <div className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-2 sm:space-y-3">
+                            <div className="flex items-center justify-between pb-1.5 sm:pb-2 border-b border-gray-100">
+                              <div className="flex items-center space-x-1.5 sm:space-x-2">
+                                <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#365314]" />
+                                <span className="text-[10px] sm:text-xs font-black text-gray-900 uppercase tracking-wider">
                                   Platform Terms & Usage Policy
                                 </span>
                               </div>
-                              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                              <span className="text-[9px] sm:text-[10px] font-extrabold uppercase px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                                 30-Day Free Trial
                               </span>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-2 text-left">
+                            <div className="grid grid-cols-1 gap-1.5 sm:gap-2 text-left">
                               {/* Policy Item 1: 1-Month Free Period */}
-                              <div className="flex items-start space-x-2.5 p-2.5 rounded-xl bg-amber-50/60 border border-amber-200/60">
-                                <Calendar className="h-4 w-4 text-[#D97706] shrink-0 mt-0.5" />
-                                <p className="text-[11px] text-gray-700 leading-snug font-medium">
+                              <div className="flex items-start space-x-2 p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-amber-50/60 border border-amber-200/60">
+                                <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#D97706] shrink-0 mt-0.5" />
+                                <p className="text-[10px] sm:text-[11px] text-gray-700 leading-snug font-medium">
                                   <strong>1-Month Free Account Trial:</strong> All accounts receive 30 days of full platform access. Accounts not subscribed after trial ends will be deactivated.
                                 </p>
                               </div>
 
                               {/* Policy Item 2: Buyer WhatsApp Limit */}
-                              <div className="flex items-start space-x-2.5 p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-200/60">
-                                <MessageSquare className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
-                                <p className="text-[11px] text-gray-700 leading-snug font-medium">
+                              <div className="flex items-start space-x-2 p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-emerald-50/60 border border-emerald-200/60">
+                                <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-700 shrink-0 mt-0.5" />
+                                <p className="text-[10px] sm:text-[11px] text-gray-700 leading-snug font-medium">
                                   <strong>Buyer WhatsApp Policy (2-Week Limit):</strong> Free buyers can message sellers directly on WhatsApp for 14 days; locks after 2 weeks until subscribed.
                                 </p>
                               </div>
 
                               {/* Policy Item 3: Seller 3 Products Limit */}
-                              <div className="flex items-start space-x-2.5 p-2.5 rounded-xl bg-orange-50/60 border border-orange-200/60">
-                                <Package className="h-4 w-4 text-orange-700 shrink-0 mt-0.5" />
-                                <p className="text-[11px] text-gray-700 leading-snug font-medium">
+                              <div className="flex items-start space-x-2 p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-orange-50/60 border border-orange-200/60">
+                                <Package className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-orange-700 shrink-0 mt-0.5" />
+                                <p className="text-[10px] sm:text-[11px] text-gray-700 leading-snug font-medium">
                                   <strong>Seller Listing Policy (Max 3 Products):</strong> Sellers can list up to 3 products during the free period. Adding a 4th product requires subscribing to continue uploading.
                                 </p>
                               </div>
@@ -1884,7 +1895,7 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                             {/* Interactive Agreement Checkbox */}
                             <label 
                               id="auth-policy-agreement-label"
-                              className={`flex items-start space-x-3 p-3 rounded-xl border transition cursor-pointer mt-1 ${
+                              className={`flex items-start space-x-2.5 sm:space-x-3 p-2.5 sm:p-3 rounded-xl border transition cursor-pointer mt-1 ${
                                 agreedToPolicy 
                                   ? 'bg-emerald-50/80 border-emerald-300 ring-2 ring-emerald-500/20' 
                                   : 'bg-[#FAF9F6] border-gray-200 hover:bg-gray-50'
@@ -1898,26 +1909,26 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                                   setAgreedToPolicy(e.target.checked);
                                   if (e.target.checked) setError('');
                                 }}
-                                className="mt-0.5 h-4 w-4 text-[#365314] rounded-md border-gray-300 focus:ring-[#365314] cursor-pointer"
+                                className="mt-0.5 h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#365314] rounded-md border-gray-300 focus:ring-[#365314] cursor-pointer"
                               />
                               <div className="space-y-0.5 text-left">
-                                <span className="text-xs font-black text-gray-900 block">
+                                <span className="text-[11px] sm:text-xs font-black text-gray-900 block">
                                   I agree to the AFKET Platform Terms & Usage Policy <span className="text-red-500">*</span>
                                 </span>
-                                <span className="text-[10px] text-gray-500 font-medium block">
+                                <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium block">
                                   I accept the 30-day trial terms, buyer WhatsApp limits, and seller 3-product listing policy.
                                 </span>
                               </div>
                             </label>
                           </div>
 
-                          <div className="space-y-2 pt-2">
+                          <div className="space-y-2 pt-1 sm:pt-2">
                             <button
                               id="btn-complete-free-registration"
                               type="button"
                               onClick={handleCompleteRegistration}
                               disabled={loading || !agreedToPolicy}
-                              className={`w-full font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center space-x-2 text-sm cursor-pointer ${
+                              className={`w-full font-bold py-2.5 sm:py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center space-x-2 text-xs sm:text-sm cursor-pointer ${
                                 agreedToPolicy
                                   ? 'bg-[#365314] hover:bg-[#283e0f] text-white hover:scale-[1.01] active:scale-[0.99]'
                                   : 'bg-gray-200 text-gray-500 cursor-not-allowed'
@@ -1925,7 +1936,7 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                             >
                               {loading ? (
                                 <>
-                                  <span className="inline-block animate-spin border-2 border-white border-t-transparent rounded-full h-4 w-4"></span>
+                                  <span className="inline-block animate-spin border-2 border-white border-t-transparent rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4"></span>
                                   <span>Opening Your Free Account...</span>
                                 </>
                               ) : (
@@ -1937,17 +1948,17 @@ export default function Auth({ onAuthSuccess, initialError, isRecoveryMode }: Au
                               )}
                             </button>
 
-                            <div className="flex items-center justify-between pt-1">
+                            <div className="flex items-center justify-between pt-0.5 sm:pt-1">
                               <button
                                 type="button"
                                 onClick={prevStep}
-                                className="px-3 py-2 text-xs font-bold text-gray-500 hover:text-gray-800 flex items-center space-x-1 cursor-pointer"
+                                className="px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-gray-500 hover:text-gray-800 flex items-center space-x-1 cursor-pointer"
                               >
                                 <ChevronLeft className="h-3.5 w-3.5" />
                                 <span>Back</span>
                               </button>
 
-                              <span className="text-[11px] font-semibold text-emerald-700">
+                              <span className="text-[10px] sm:text-[11px] font-semibold text-emerald-700">
                                 100% Free • No Payment Required Now
                               </span>
                             </div>

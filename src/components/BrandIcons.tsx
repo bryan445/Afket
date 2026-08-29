@@ -170,3 +170,208 @@ export function FacebookLogo({ className = "h-4 w-4", ...props }: React.SVGProps
     </svg>
   );
 }
+
+// Airtel Money Brand Logo Vector
+export function AirtelMoneyLogo({ className = "h-7 w-auto", ...props }: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 120 44"
+      width="120"
+      height="44"
+      className={className}
+      fill="none"
+      aria-label="Airtel Money"
+      {...props}
+    >
+      <rect width="120" height="44" rx="8" fill="#E11900" />
+      {/* Airtel iconic curved emblem */}
+      <g transform="translate(10, 7)">
+        <path
+          d="M15 4C9.5 4 5 8.5 5 14C5 20 10.5 24.5 17 25C17.5 25.04 18 24.6 18 24C18 23.4 17.5 23 17 23C11.5 22.5 7.2 18.8 7.2 14C7.2 9.7 10.7 6.2 15 6.2C19.3 6.2 22.8 9.7 22.8 14C22.8 16.5 21.6 18.7 19.8 20C19.4 20.3 19.3 20.9 19.6 21.3C19.9 21.7 20.5 21.8 20.9 21.5C23.3 19.8 24.8 17.1 24.8 14C24.8 8.5 20.5 4 15 4Z"
+          fill="#FFFFFF"
+        />
+        <circle cx="15" cy="14" r="3.2" fill="#FFFFFF" />
+      </g>
+      {/* airtel money text mark */}
+      <text
+        x="42"
+        y="21"
+        fill="#FFFFFF"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontWeight="900"
+        fontSize="15"
+        letterSpacing="-0.5"
+      >
+        airtel
+      </text>
+      <text
+        x="42"
+        y="33"
+        fill="#FFD200"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontWeight="800"
+        fontSize="10"
+        letterSpacing="0.8"
+      >
+        MONEY
+      </text>
+    </svg>
+  );
+}
+
+// TNM Mpamba Brand Logo Vector
+export function MpambaLogo({ className = "h-7 w-auto", ...props }: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 120 44"
+      width="120"
+      height="44"
+      className={className}
+      fill="none"
+      aria-label="TNM Mpamba"
+      {...props}
+    >
+      <rect width="120" height="44" rx="8" fill="#008751" />
+      {/* TNM corner badge */}
+      <rect x="8" y="7" width="28" height="30" rx="6" fill="#DC2626" />
+      <text
+        x="22"
+        y="18"
+        textAnchor="middle"
+        fill="#FFFFFF"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontWeight="900"
+        fontSize="9"
+      >
+        TNM
+      </text>
+      <path
+        d="M14 23L17 32L22 25L27 32L30 23"
+        stroke="#FFFFFF"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Mpamba text */}
+      <text
+        x="42"
+        y="22"
+        fill="#FFFFFF"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontWeight="900"
+        fontSize="14"
+        letterSpacing="-0.3"
+      >
+        mpamba
+      </text>
+      <text
+        x="42"
+        y="33"
+        fill="#86EFAC"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontWeight="800"
+        fontSize="9"
+        letterSpacing="0.5"
+      >
+        INSTANT PAY
+      </text>
+    </svg>
+  );
+}
+
+// Malawi Banks Brand Logo Vector (NBM, Standard Bank, NBS, Centenary)
+export function MalawiBanksLogo({ className = "h-7 w-auto", ...props }: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 120 44"
+      width="120"
+      height="44"
+      className={className}
+      fill="none"
+      aria-label="Malawi Banks Transfer"
+      {...props}
+    >
+      <rect width="120" height="44" rx="8" fill="#0F172A" />
+      {/* Bank pillars icon */}
+      <g transform="translate(10, 9)">
+        {/* Pediment roof */}
+        <path d="M13 2L3 8H23L13 2Z" fill="#38BDF8" />
+        <rect x="2" y="8" width="22" height="2" fill="#E2E8F0" />
+        {/* 4 Pillars */}
+        <rect x="4" y="11" width="2.5" height="9" rx="0.5" fill="#E2E8F0" />
+        <rect x="9.5" y="11" width="2.5" height="9" rx="0.5" fill="#E2E8F0" />
+        <rect x="15" y="11" width="2.5" height="9" rx="0.5" fill="#E2E8F0" />
+        <rect x="20.5" y="11" width="2.5" height="9" rx="0.5" fill="#E2E8F0" />
+        {/* Base */}
+        <rect x="2" y="21" width="22" height="3" rx="1" fill="#38BDF8" />
+      </g>
+      {/* Bank labels */}
+      <text
+        x="40"
+        y="21"
+        fill="#FFFFFF"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontWeight="800"
+        fontSize="12"
+        letterSpacing="0.2"
+      >
+        BANK PAY
+      </text>
+      <text
+        x="40"
+        y="33"
+        fill="#94A3B8"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontWeight="700"
+        fontSize="8.5"
+        letterSpacing="0.4"
+      >
+        NBM • STB • NBS
+      </text>
+    </svg>
+  );
+}
+
+// Visa & Mastercard Brand Logo Vector
+export function VisaMastercardLogo({ className = "h-7 w-auto", ...props }: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 120 44"
+      width="120"
+      height="44"
+      className={className}
+      fill="none"
+      aria-label="Visa and Mastercard"
+      {...props}
+    >
+      <rect width="120" height="44" rx="8" fill="#1E293B" />
+      {/* VISA mark */}
+      <g transform="translate(10, 12)">
+        <rect width="44" height="20" rx="3" fill="#FFFFFF" />
+        <text
+          x="22"
+          y="15"
+          textAnchor="middle"
+          fill="#1A1F71"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          fontStyle="italic"
+          fontWeight="900"
+          fontSize="13"
+          letterSpacing="1"
+        >
+          VISA
+        </text>
+      </g>
+      {/* Mastercard interlocking circles */}
+      <g transform="translate(62, 12)">
+        <rect width="48" height="20" rx="3" fill="#262626" />
+        <circle cx="20" cy="10" r="7" fill="#EB001B" />
+        <circle cx="28" cy="10" r="7" fill="#F79E1B" fillOpacity="0.9" />
+        <path
+          d="M24 5.3A7 7 0 0 1 24 14.7A7 7 0 0 1 24 5.3Z"
+          fill="#FF5F00"
+        />
+      </g>
+    </svg>
+  );
+}

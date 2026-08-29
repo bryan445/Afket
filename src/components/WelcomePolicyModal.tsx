@@ -192,7 +192,7 @@ export function WelcomePolicyModal({ user, isOpen, onAgree }: WelcomePolicyModal
                     I have read, understood, and agree to the AFKET Platform Terms & Usage Policy
                   </span>
                   <span className="text-[11px] text-gray-500 font-medium block">
-                    I agree to the 30-day trial terms and policy.
+                    I agree to the 30-day trial terms, buyer WhatsApp limits, and seller 3-product listing policy.
                   </span>
                 </div>
               </label>

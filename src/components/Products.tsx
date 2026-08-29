@@ -7,6 +7,8 @@ import {
   getCurrencyLabel, 
   SUPPORTED_CURRENCIES,
   checkProductUploadEligibility,
+  incrementSellerLifetimeUploadCount,
+  getSellerLifetimeUploadCount,
   getUserSubscriptionInfo,
   checkBuyerWhatsAppPermission
 } from '../types';
@@ -193,11 +195,11 @@ function ProductListingCard({
 
   return (
     <div 
-      className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-xs hover:shadow-md hover:scale-[1.01] transition-all duration-300 flex flex-col h-full text-left"
+      className="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 overflow-hidden shadow-xs hover:shadow-md hover:scale-[1.01] transition-all duration-300 flex flex-col h-full text-left"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="h-48 relative overflow-hidden bg-[#FAF9F6] shrink-0">
+      <div className="h-28 sm:h-36 md:h-48 relative overflow-hidden bg-[#FAF9F6] shrink-0">
         <img 
           src={allImages[activeIdx]} 
           alt={product.title} 
@@ -205,76 +207,72 @@ function ProductListingCard({
           referrerPolicy="no-referrer"
         />
         {allImages.length > 1 && (
-          <div className="absolute bottom-3 right-3 flex space-x-1 bg-black/45 px-2 py-1 rounded-full backdrop-blur-xs">
+          <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex space-x-1 bg-black/45 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full backdrop-blur-xs">
             {allImages.map((_, idx) => (
               <span 
                 key={idx} 
-                className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${
+                className={`h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full transition-all duration-300 ${
                   idx === activeIdx ? 'bg-amber-400 scale-125' : 'bg-white/45'
                 }`}
               />
             ))}
           </div>
         )}
-        <span className="absolute top-3 left-3 bg-[#ECFCCB] text-[#365314] text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full">
+        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-[#ECFCCB] text-[#365314] text-[8px] sm:text-[10px] uppercase font-bold tracking-wider px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
           {product.category.replace('_', ' ')}
         </span>
         {product.availableQuantity <= 0 && (
           <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center">
-            <span className="bg-rose-600 text-white font-black text-xs uppercase px-3 py-1.5 rounded-lg tracking-wide">Out of Stock</span>
+            <span className="bg-rose-600 text-white font-black text-[9px] sm:text-xs uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-md tracking-wide">Out of Stock</span>
           </div>
         )}
       </div>
 
-      <div className="p-5 flex flex-col flex-1 justify-between space-y-4">
-        <div className="space-y-3">
+      <div className="p-2.5 sm:p-4 md:p-5 flex flex-col flex-1 justify-between space-y-2 sm:space-y-3.5">
+        <div className="space-y-1.5 sm:space-y-3">
           <div>
-            <h3 className="font-sans font-bold text-[#1F2937] text-base line-clamp-1 mb-1">{product.title}</h3>
-            <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
-              <span className="bg-[#ECFCCB] text-[#365314] px-2.5 py-0.5 rounded-lg text-[10px] font-mono border border-lime-200">
+            <h3 className="font-sans font-bold text-[#1F2937] text-xs sm:text-sm md:text-base line-clamp-1 mb-1" title={product.title}>
+              {product.title}
+            </h3>
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1 sm:gap-1.5 text-xs font-semibold">
+              <span className="bg-[#ECFCCB] text-[#365314] px-1.5 sm:px-2.5 py-0.5 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] font-mono border border-lime-200 truncate max-w-full">
                 Intl: ${(product.internationalPrice || product.price).toLocaleString()}/{product.unit}
               </span>
-              <span className="bg-[#FFFBEB] text-amber-800 px-2.5 py-0.5 rounded-lg text-[10px] font-mono border border-amber-200">
+              <span className="bg-[#FFFBEB] text-amber-800 px-1.5 sm:px-2.5 py-0.5 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] font-mono border border-amber-200 truncate max-w-full">
                 Local: {formatLocalPrice(product.localPrice || Math.round(product.price * 0.85), product.sellerNationality, product.localCurrency)}/{product.unit}
               </span>
             </div>
           </div>
 
-          <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 h-8 font-medium">
+          <p className="hidden sm:block text-gray-500 text-xs leading-relaxed line-clamp-2 h-8 font-medium">
             {product.description}
           </p>
 
-          <div className="space-y-1.5 pt-2 border-t border-gray-100 text-[11px] text-gray-600 font-medium">
+          <div className="space-y-1 sm:space-y-1.5 pt-1.5 sm:pt-2 border-t border-gray-100 text-[10px] sm:text-[11px] text-gray-600 font-medium">
             <div className="flex items-center justify-between">
-              <span className="text-gray-400">Origin Base:</span>
-              <span className="font-bold text-gray-800 flex items-center">
-                <MapPin className="h-3 w-3 text-[#D97706] mr-1 shrink-0" />
-                {product.location}
+              <span className="text-gray-400">Origin:</span>
+              <span className="font-bold text-gray-800 flex items-center truncate max-w-[110px] sm:max-w-[160px]">
+                <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-[#D97706] mr-1 shrink-0" />
+                <span className="truncate">{product.location}</span>
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Available:</span>
-              <span className="font-bold text-blue-600 font-mono">{product.availableQuantity.toLocaleString()} {product.unit}</span>
+              <span className="font-bold text-blue-600 font-mono truncate">{product.availableQuantity.toLocaleString()} {product.unit}</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Condition/Grade:</span>
+            <div className="hidden sm:flex items-center justify-between">
+              <span className="text-gray-400">Grade:</span>
               <span className="font-bold text-gray-800 truncate max-w-[160px]" title={product.condition || 'Verified Standard'}>
                 {product.condition || 'Verified Standard'}
               </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Min Order (MOQ):</span>
+            <div className="hidden sm:flex items-center justify-between">
+              <span className="text-gray-400">Min Order:</span>
               <span className="font-bold text-amber-700 font-mono">{product.minOrderQty ? `${product.minOrderQty} ${product.unit}` : `1 ${product.unit}`}</span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="hidden sm:flex items-center justify-between">
               <span className="text-gray-400">Packaging:</span>
               <span className="font-bold text-gray-800 truncate max-w-[160px]">{product.packaging || 'Bulk Cargo'}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Certifications:</span>
-              <span className="font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 truncate max-w-[160px]" title={product.certifications || 'Verified Quality'}>
-                {product.certifications || 'Verified Quality'}
-              </span>
             </div>
             {user.role !== 'seller' && (
               <div className="flex items-center justify-between pt-1 border-t border-dashed border-gray-100">
@@ -282,18 +280,18 @@ function ProductListingCard({
                 <button
                   type="button"
                   onClick={() => onSelectSeller?.(product.sellerId, product.sellerBusinessName || product.sellerName)}
-                  className="font-bold text-gray-800 hover:text-[#365314] truncate max-w-[160px] flex items-center cursor-pointer transition text-left group"
+                  className="font-bold text-gray-800 hover:text-[#365314] truncate max-w-[100px] sm:max-w-[160px] flex items-center cursor-pointer transition text-left group"
                   title="Filter to view only this supplier's products"
                 >
                   {product.sellerLogoUrl ? (
                     <img 
                       src={product.sellerLogoUrl} 
                       alt="Supplier Logo" 
-                      className="w-4.5 h-4.5 rounded-md object-cover mr-1.5 shrink-0 border border-gray-150"
+                      className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 rounded-md object-cover mr-1 shrink-0 border border-gray-150"
                       referrerPolicy="no-referrer"
                     />
                   ) : (
-                    <User className="h-3.5 w-3.5 text-[#365314] mr-1 shrink-0 group-hover:scale-110 transition-transform" />
+                    <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#365314] mr-1 shrink-0 group-hover:scale-110 transition-transform" />
                   )}
                   <span className="truncate group-hover:underline">{product.sellerBusinessName || product.sellerName}</span>
                 </button>
@@ -304,8 +302,8 @@ function ProductListingCard({
 
         {/* Direct Seller Contact Channels */}
         {product.sellerId !== user.id && (
-          <div className="mt-3 pt-2.5 border-t border-gray-100 flex flex-col space-y-1 text-left px-1">
-            <div className="flex items-center justify-between">
+          <div className="mt-1 sm:mt-3 pt-1.5 sm:pt-2.5 border-t border-gray-100 flex flex-col space-y-1 text-left px-0.5">
+            <div className="hidden sm:flex items-center justify-between">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Direct Seller Connection:</span>
               {user.role === 'buyer' && !subInfo.isPaid && (
                 <span className={`text-[9px] font-extrabold px-1.5 py-0.2 rounded ${
@@ -315,14 +313,14 @@ function ProductListingCard({
                 </span>
               )}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               {/* WhatsApp */}
               <a
                 href={`https://wa.me/${(product.sellerWhatsapp || product.sellerPhone || '+2348031112222').replace(/[^0-9]/g, '')}`}
                 target={buyerWa.isBlocked ? undefined : "_blank"}
                 rel={buyerWa.isBlocked ? undefined : "noopener noreferrer"}
                 onClick={handleWhatsAppAction}
-                className={`flex-1 flex items-center justify-center space-x-1.5 rounded-xl py-2 px-2.5 text-xs font-bold transition duration-200 cursor-pointer ${
+                className={`flex-1 flex items-center justify-center space-x-1 sm:space-x-1.5 rounded-lg sm:rounded-xl py-1.5 sm:py-2 px-1 sm:px-2.5 text-[10px] sm:text-xs font-bold transition duration-200 cursor-pointer ${
                   buyerWa.isBlocked
                     ? 'bg-gray-100 hover:bg-rose-50 text-gray-500 hover:text-rose-700 border border-gray-200 hover:border-rose-200'
                     : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/60'
@@ -331,13 +329,13 @@ function ProductListingCard({
               >
                 {buyerWa.isBlocked ? (
                   <>
-                    <Lock className="h-3.5 w-3.5 text-rose-500 shrink-0" />
-                    <span className="truncate">WA (Blocked)</span>
+                    <Lock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-rose-500 shrink-0" />
+                    <span className="truncate">WA</span>
                   </>
                 ) : (
                   <>
-                    <WhatsAppLogo className="h-4 w-4 shrink-0" />
-                    <span>WhatsApp</span>
+                    <WhatsAppLogo className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+                    <span className="truncate">WhatsApp</span>
                   </>
                 )}
               </a>
@@ -347,10 +345,10 @@ function ProductListingCard({
                 <a
                   href={`mailto:${product.sellerEmail}?subject=Inquiry about ${encodeURIComponent(product.title)}`}
                   onClick={handleGeneralContactAction}
-                  className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-700 border border-red-200/60 rounded-xl p-2 text-xs font-bold transition duration-200 shrink-0 cursor-pointer"
+                  className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-700 border border-red-200/60 rounded-lg sm:rounded-xl p-1.5 sm:p-2 text-[10px] sm:text-xs font-bold transition duration-200 shrink-0 cursor-pointer"
                   title="Send Email"
                 >
-                  <EmailLogo className="h-4 w-4" />
+                  <EmailLogo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </a>
               )}
 
@@ -359,10 +357,10 @@ function ProductListingCard({
                 <a
                   href={`tel:${product.sellerPhone || product.sellerWhatsapp}`}
                   onClick={handleGeneralContactAction}
-                  className="flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/60 rounded-xl p-2 text-xs font-bold transition duration-200 shrink-0 cursor-pointer"
+                  className="flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/60 rounded-lg sm:rounded-xl p-1.5 sm:p-2 text-[10px] sm:text-xs font-bold transition duration-200 shrink-0 cursor-pointer"
                   title="Call Seller"
                 >
-                  <CallLogo className="h-4 w-4" />
+                  <CallLogo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </a>
               )}
 
@@ -373,10 +371,10 @@ function ProductListingCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleGeneralContactAction}
-                  className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200/60 rounded-xl p-2 text-xs font-bold transition duration-200 shrink-0 cursor-pointer"
+                  className="hidden sm:flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200/60 rounded-lg sm:rounded-xl p-1.5 sm:p-2 text-[10px] sm:text-xs font-bold transition duration-200 shrink-0 cursor-pointer"
                   title="Visit Facebook Page"
                 >
-                  <FacebookLogo className="h-4 w-4" />
+                  <FacebookLogo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </a>
               )}
             </div>
@@ -384,19 +382,19 @@ function ProductListingCard({
         )}
 
         {product.sellerId === user.id && (
-          <div className="pt-2 shrink-0">
-            <div className="grid grid-cols-2 gap-2">
+          <div className="pt-1.5 sm:pt-2 shrink-0">
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
               <button
                 id={`btn-edit-${product.id}`}
                 onClick={() => onEdit?.(product)}
-                className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center cursor-pointer"
+                className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-bold text-[10px] sm:text-xs py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl transition flex items-center justify-center cursor-pointer"
               >
                 Edit
               </button>
               <button
                 id={`btn-delete-${product.id}`}
                 onClick={() => onDelete?.(product)}
-                className="bg-rose-500 hover:bg-rose-600 active:bg-rose-700 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center cursor-pointer"
+                className="bg-rose-500 hover:bg-rose-600 active:bg-rose-700 text-white font-bold text-[10px] sm:text-xs py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl transition flex items-center justify-center cursor-pointer"
               >
                 Delete
               </button>
@@ -481,6 +479,7 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
   });
   const [selectedCondition, setSelectedCondition] = useState<string>('all');
   const [selectedPackaging, setSelectedPackaging] = useState<string>('all');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     const checkFilters = () => {
@@ -551,6 +550,7 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
   const [newImageUrl3, setNewImageUrl3] = useState('');
   const [localUploadedImages, setLocalUploadedImages] = useState<string[]>([]);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
   const [isDragActive, setIsDragActive] = useState(false);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState(false);
@@ -715,6 +715,27 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
     loadProducts();
   }, []);
 
+  const getCategoryFallbackImage = (cat: string): string => {
+    switch(cat) {
+      case 'crops':
+        return 'https://images.unsplash.com/photo-1574316071802-0d684efa7bf5?auto=format&fit=crop&q=80&w=600';
+      case 'minerals':
+        return 'https://images.unsplash.com/photo-1605557626697-2e87166d88f9?auto=format&fit=crop&q=80&w=600';
+      case 'fruits':
+        return 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&q=80&w=600';
+      case 'legumes':
+        return 'https://images.unsplash.com/photo-1585998080700-ee4b6f12122b?auto=format&fit=crop&q=80&w=600';
+      case 'clothings':
+        return 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80&w=600';
+      case 'meat':
+        return 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&q=80&w=600';
+      case 'handicrafts':
+        return 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=600';
+      default:
+        return 'https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&q=80&w=600';
+    }
+  };
+
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
@@ -733,71 +754,99 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
       return;
     }
 
-    const localPriceNum = parseFloat(newLocalPrice);
-    const intlPriceNum = parseFloat(newInternationalPrice);
-    const qtyNum = parseFloat(newQuantity);
+    if (!newTitle.trim()) {
+      setFormError('Please enter a product title.');
+      return;
+    }
+
+    let localPriceNum = parseFloat(newLocalPrice);
+    let intlPriceNum = parseFloat(newInternationalPrice);
+
+    if (isNaN(localPriceNum) && isNaN(intlPriceNum)) {
+      setFormError('Please enter at least one price (Local Price or International USD Price).');
+      return;
+    }
+
+    // Auto-calculate the corresponding price if only one is supplied
+    if (isNaN(localPriceNum) && !isNaN(intlPriceNum)) {
+      localPriceNum = Math.round(intlPriceNum * 1750);
+    }
+    if (isNaN(intlPriceNum) && !isNaN(localPriceNum)) {
+      intlPriceNum = Math.max(1, Math.round(localPriceNum / 1750));
+    }
+
+    const qtyNum = parseFloat(newQuantity) || 1;
     const minOrderQtyNum = parseFloat(newMinOrderQty) || undefined;
+    const conditionVal = newCondition || 'Grade A (Export Quality)';
+    const locationVal = newLocation.trim() || user.location || 'Lilongwe, Malawi';
+    const descVal = newDesc.trim() || `${newTitle} - High quality verified agricultural commodity.`;
 
-    if (!newTitle || !newDesc || isNaN(localPriceNum) || isNaN(intlPriceNum) || isNaN(qtyNum) || !newLocation || !newCondition) {
-      setFormError('Please fill in all required fields (including Title, Description, Local & International Prices, Quantity, and Condition).');
-      return;
+    // Ensure images are populated: use uploaded images or fallback image for category
+    let finalImages = [...localUploadedImages].filter(Boolean);
+    if (finalImages.length === 0) {
+      finalImages = [getCategoryFallbackImage(newCategory)];
     }
 
-    if (localUploadedImages.length === 0) {
-      setFormError('Please upload at least one product image from your device.');
-      return;
-    }
+    setIsSubmittingProduct(true);
 
     try {
-      const finalImageUrl = localUploadedImages[0];
-      const finalImageUrls = localUploadedImages;
+      const finalImageUrl = finalImages[0];
+      const finalImageUrls = finalImages;
 
       const productData = {
-        title: newTitle,
-        description: newDesc,
+        title: newTitle.trim(),
+        description: descVal,
         category: newCategory,
-        price: intlPriceNum, // general average price set to international price
+        price: intlPriceNum,
         localPrice: localPriceNum,
-        localCurrency: newLocalCurrency,
+        localCurrency: newLocalCurrency || getCurrencyLabel(user.nationality),
         internationalPrice: intlPriceNum,
-        unit: newUnit,
+        unit: newUnit || 'Metric Ton',
         availableQuantity: qtyNum,
-        condition: newCondition,
+        condition: conditionVal,
         minOrderQty: minOrderQtyNum,
-        packaging: newPackaging || undefined,
-        location: newLocation,
+        packaging: newPackaging || '65kg Jute Bags',
+        location: locationVal,
         imageUrl: finalImageUrl,
         imageUrls: finalImageUrls,
         harvestDate: newHarvestDate || undefined,
         sellerNationality: user.nationality
       };
 
-      // Ensure the seller's profile exists and is correctly synchronized in the database with role 'seller' before product insertion/updating is triggered
-      await ensureProfileExists(user.id, 'seller');
+      // Ensure the seller's profile exists in the database
+      try {
+        await ensureProfileExists(user.id, 'seller');
+      } catch (profileErr) {
+        console.warn('Profile sync notice:', profileErr);
+      }
 
       if (editingProduct) {
         await db.products.update(editingProduct.id, productData);
       } else {
         await db.products.create({
           sellerId: user.id,
-          sellerName: user.fullName,
-          sellerBusinessName: user.businessName,
+          sellerName: user.fullName || 'Verified Seller',
+          sellerBusinessName: user.businessName || user.fullName || 'Trade Supplier',
           ...productData
         });
+
+        // Record lifetime upload count
+        incrementSellerLifetimeUploadCount(user.id, currentCount);
       }
 
       setFormSuccess(true);
-      loadProducts();
+      await loadProducts();
+
       setTimeout(() => {
         setIsAddPanelOpen(false);
         setEditingProduct(null);
-        // Reset form
+        // Reset form fields
         setNewTitle('');
         setNewDesc('');
         setNewLocalPrice('');
         setNewInternationalPrice('');
         setNewQuantity('');
-        setNewCondition('');
+        setNewCondition('Grade A (Export Quality)');
         setNewMinOrderQty('');
         setNewPackaging('65kg Jute Bags');
         setNewHarvestDate('');
@@ -806,9 +855,12 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
         setNewImageUrl3('');
         setLocalUploadedImages([]);
         setFormSuccess(false);
-      }, 1500);
+        setIsSubmittingProduct(false);
+      }, 1200);
     } catch (err: any) {
-      setFormError(err.message || 'Failed to list product.');
+      console.error('Submit product listing error:', err);
+      setFormError(err.message || 'Failed to submit product listing. Please check your network and try again.');
+      setIsSubmittingProduct(false);
     }
   };
 
@@ -1270,20 +1322,36 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
               ></textarea>
             </div>
 
+            {formError && (
+              <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl flex items-center space-x-2">
+                <AlertCircle className="h-4 w-4 shrink-0 text-rose-500" />
+                <span>{formError}</span>
+              </div>
+            )}
+
             <div className="pt-4 flex gap-3">
               <button
                 type="button"
+                disabled={isSubmittingProduct}
                 onClick={() => { setIsAddPanelOpen(false); setEditingProduct(null); }}
-                className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs py-3 rounded-xl transition cursor-pointer"
+                className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs py-3 rounded-xl transition cursor-pointer disabled:opacity-50"
               >
                 Cancel & Return
               </button>
               <button
                 id="btn-form-submit"
                 type="submit"
-                className="flex-1 bg-[#D97706] hover:bg-[#b45309] text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer"
+                disabled={isSubmittingProduct || isProcessingImages}
+                className="flex-1 bg-[#D97706] hover:bg-[#b45309] active:bg-[#92400e] disabled:opacity-60 text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer flex items-center justify-center space-x-2"
               >
-                {editingProduct ? 'Save Changes' : 'Submit Listing'}
+                {isSubmittingProduct ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>{editingProduct ? 'Saving...' : 'Submitting Listing...'}</span>
+                  </>
+                ) : (
+                  <span>{editingProduct ? 'Save Changes' : 'Submit Listing'}</span>
+                )}
               </button>
             </div>
           </form>
@@ -1293,28 +1361,78 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
   }
 
   return (
-    <div className="py-6 space-y-6 font-sans">
-      {/* Header Block */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
-        <div className="text-left">
-          <h1 className="text-3xl font-sans font-black tracking-tight text-[#1F2937]">Trade Agricultural Marketplace</h1>
-          <p className="text-sm text-gray-500 font-medium mt-1">Direct high-volume agricultural sourcing and supply lines.</p>
+    <div className="py-2 sm:py-6 space-y-4 sm:space-y-6 font-sans">
+      {/* Header Block & Action Controls */}
+      <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-3 sm:pb-4">
+        {/* Search Icon Toggle & Expanded Search Bar */}
+        <div className="flex items-center gap-2 flex-1 max-w-full">
+          {!isSearchOpen ? (
+            <button
+              id="btn-toggle-search"
+              type="button"
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2.5 bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 border border-gray-200 rounded-xl transition cursor-pointer shadow-xs flex items-center gap-2"
+              title="Click to Search Products"
+              aria-label="Open Search Bar"
+            >
+              <Search className="h-4 w-4 text-[#D97706]" />
+              <span className="hidden sm:inline text-xs font-bold text-gray-500">Search Products</span>
+            </button>
+          ) : (
+            <div className="relative flex-1 flex items-center gap-1.5 animate-fadeIn">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#D97706]">
+                  <Search className="h-4 w-4" />
+                </div>
+                <input
+                  id="search-market"
+                  type="text"
+                  autoFocus
+                  placeholder="Search by crop, country, cooperative..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-9 pr-8 py-2 bg-white border-2 border-[#D97706] rounded-xl text-gray-900 text-xs sm:text-sm focus:outline-hidden transition-all shadow-xs font-medium"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch('')}
+                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setSearch('');
+                }}
+                className="p-2 text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-xl text-xs font-bold cursor-pointer transition shrink-0"
+                title="Close Search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
 
+        {/* Add Product Button */}
         {user.role === 'seller' && (
           uploadEligibility.allowed ? (
             <button
               id="btn-add-harvest"
               onClick={handleOpenAdd}
-              className="inline-flex items-center bg-[#D97706] hover:bg-[#b45309] active:bg-amber-800 text-white px-5 py-3 rounded-xl text-xs font-bold shadow-md transition cursor-pointer shrink-0 gap-1.5"
+              className="inline-flex items-center bg-[#D97706] hover:bg-[#b45309] active:bg-amber-800 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold shadow-sm hover:shadow transition cursor-pointer shrink-0 gap-1.5"
+              title="Add Product Listing"
             >
-              <Plus className="h-4 w-4" />
-              <span>Add Product Listing</span>
-              {uploadEligibility.isUnpaid && (
-                <span className="ml-1 bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                  {sellerProductsCount}/3 Free
+              <Plus className="h-4 w-4 stroke-[2.5]" />
+              {uploadEligibility.isUnpaid ? (
+                <span className="text-[11px] sm:text-xs font-bold whitespace-nowrap">
+                  {Math.max(0, 3 - sellerProductsCount)} free remaining
                 </span>
-              )}
+              ) : null}
             </button>
           ) : (
             <button
@@ -1326,11 +1444,13 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
                   'Free Period Limit: 3 Products'
                 )
               }
-              className="inline-flex items-center bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-5 py-3 rounded-xl text-xs font-bold shadow-xs transition cursor-pointer shrink-0 gap-1.5"
+              className="inline-flex items-center bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold shadow-xs transition cursor-pointer shrink-0 gap-1"
               title="You have reached the 3-product free limit. Subscribe to continue uploading."
             >
-              <Lock className="h-4 w-4 text-amber-700" />
-              <span>Add Product ({sellerProductsCount}/3 Limit Reached)</span>
+              <Plus className="h-4 w-4 stroke-[2.5] text-amber-700" />
+              <span className="text-[11px] sm:text-xs font-bold whitespace-nowrap">
+                0 free remaining (Subscribe)
+              </span>
             </button>
           )
         )}
@@ -1403,29 +1523,15 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
         </div>
       )}
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col lg:flex-row gap-3">
-        <div className="relative flex-1">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-            <Search className="h-4 w-4" />
-          </div>
-          <input
-            id="search-market"
-            type="text"
-            placeholder="Search by crop, origin country, cooperative name..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#D97706] transition-all shadow-xs font-medium"
-          />
-        </div>
-
-        {/* Condition & Packaging Dropdown Filters */}
-        <div className="flex flex-wrap sm:flex-nowrap gap-2">
+      {/* Filter and Categories Controls */}
+      <div className="flex flex-col lg:flex-row gap-2.5">
+        {/* Condition & Packaging Dropdown Filters (Side-by-side on Mobile) */}
+        <div className="grid grid-cols-2 sm:flex sm:flex-nowrap gap-2 w-full sm:w-auto">
           <select
             id="filter-condition"
             value={selectedCondition}
             onChange={(e) => setSelectedCondition(e.target.value)}
-            className="bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-[#D97706] shadow-xs cursor-pointer flex-1 sm:flex-initial"
+            className="w-full min-w-0 truncate bg-white border border-gray-200 rounded-xl px-2 sm:px-3 py-2 text-[11px] sm:text-xs font-bold text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-[#D97706] shadow-xs cursor-pointer"
           >
             <option value="all">All Conditions / Grades</option>
             {CONDITION_OPTIONS.filter(c => c !== 'Other / Custom').map((cond) => (
@@ -1439,7 +1545,7 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
             id="filter-packaging"
             value={selectedPackaging}
             onChange={(e) => setSelectedPackaging(e.target.value)}
-            className="bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-[#D97706] shadow-xs cursor-pointer flex-1 sm:flex-initial"
+            className="w-full min-w-0 truncate bg-white border border-gray-200 rounded-xl px-2 sm:px-3 py-2 text-[11px] sm:text-xs font-bold text-gray-700 focus:outline-hidden focus:ring-2 focus:ring-[#D97706] shadow-xs cursor-pointer"
           >
             <option value="all">All Packaging Types</option>
             {PACKAGING_OPTIONS.filter(p => p !== 'Other / Custom').map((pkg) => (
@@ -1456,7 +1562,7 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
                 selectedCategory === cat.id
                   ? 'bg-[#D97706] text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
@@ -1470,9 +1576,9 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
 
       {/* Products Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white border border-gray-100 rounded-3xl h-96 animate-pulse"></div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white border border-gray-100 rounded-2xl sm:rounded-3xl h-64 sm:h-96 animate-pulse"></div>
           ))}
         </div>
       ) : filteredProducts.length === 0 ? (
@@ -1482,7 +1588,7 @@ export default function Products({ user, onNavigateTab, onUpdateProfile }: Produ
           <p className="text-sm text-gray-500 mt-1 max-w-md mx-auto font-medium">There are currently no listed products matching your criteria. Try adjusting your filter or search keywords.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6">
           {filteredProducts.map((product) => (
             <ProductListingCard 
               key={product.id}

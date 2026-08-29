@@ -201,45 +201,6 @@ export default function Navbar({
         </div>
       </nav>
 
-      {/* Mobile Sub-Header Horizontal Tab Strip */}
-      <div className="sm:hidden fixed top-16 inset-x-0 z-40 bg-white border-b border-gray-200/80 px-3 py-2 flex items-center justify-between gap-1 overflow-x-auto shadow-2xs">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => {
-                setCurrentTab(item.id);
-                setMobileMenuOpen(false);
-              }}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer shrink-0 ${
-                isActive
-                  ? 'bg-[#FFFBEB] text-[#D97706] border border-amber-300/80 shadow-2xs'
-                  : 'text-gray-500 hover:text-gray-800 bg-gray-50'
-              }`}
-            >
-              <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-[#D97706]' : 'text-gray-400'}`} />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
-        <button
-          onClick={() => {
-            setCurrentTab('profile');
-            setMobileMenuOpen(false);
-          }}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer shrink-0 ${
-            currentTab === 'profile'
-              ? 'bg-[#FFFBEB] text-[#D97706] border border-amber-300/80 shadow-2xs'
-              : 'text-gray-500 hover:text-gray-800 bg-gray-50'
-          }`}
-        >
-          <User className={`h-3.5 w-3.5 ${currentTab === 'profile' ? 'text-[#D97706]' : 'text-gray-400'}`} />
-          <span>Profile</span>
-        </button>
-      </div>
-
       {/* Mobile Slide-Down Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -248,7 +209,7 @@ export default function Navbar({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="sm:hidden fixed top-28 inset-x-0 z-40 bg-white/98 backdrop-blur-xl border-b border-gray-200 shadow-xl p-4 font-sans text-left space-y-4"
+            className="sm:hidden fixed top-16 inset-x-0 z-40 bg-white/98 backdrop-blur-xl border-b border-gray-200 shadow-xl p-4 font-sans text-left space-y-4"
           >
             {/* User Profile Summary Card */}
             <div 
