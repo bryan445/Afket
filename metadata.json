@@ -1,0 +1,6 @@
+{
+  "name": "Afket - African Market",
+  "description": "An agricultural trading marketplace for African goods connecting buyers, sellers, and logistics providers under the AFKET network.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
