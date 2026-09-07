@@ -83,11 +83,12 @@ export function getAnnualSubscriptionFee(role?: UserRole, accountType?: AccountT
 export const AFKET_SUPPORT = {
   email: 'admin@afket.store',
   altEmail: 'admin@afket.store',
-  whatsappNumber: '0987523475',
-  whatsappDisplay: '0987523475',
+  whatsappNumber: '+265987523475',
+  whatsappDisplay: '+265 987 523 475',
   whatsappUrl: 'https://wa.me/265987523475?text=Hello%20AFKET%20Support,%20I%20need%20assistance%20with%20my%20trade%20account',
-  phone: '0884716426',
-  phoneTel: 'tel:0884716426',
+  phone: '+265987523475',
+  phoneDisplay: '+265 987 523 475',
+  phoneTel: 'tel:+265987523475',
   officeLocation: 'Blantyre / Lilongwe, Malawi'
 };
 

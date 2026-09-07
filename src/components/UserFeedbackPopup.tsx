@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { UserProfile, AFKET_SUPPORT } from '../types';
+import { UserProfile } from '../types';
 import { db } from '../lib/supabase';
-import { X, Star, MessageSquareHeart, CheckCircle2, Send, Sparkles, AlertCircle, Mail } from 'lucide-react';
+import { X, Star, MessageSquareHeart, CheckCircle2, Sparkles, AlertCircle } from 'lucide-react';
 import { WhatsAppLogo } from './BrandIcons';
 
 interface UserFeedbackPopupProps {
@@ -22,7 +22,7 @@ export const UserFeedbackPopup: React.FC<UserFeedbackPopupProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [emailMailtoUrl, setEmailMailtoUrl] = useState<string>('');
+  const [waFeedbackUrl, setWaFeedbackUrl] = useState<string>('');
 
   if (!isOpen) return null;
 
@@ -49,34 +49,27 @@ export const UserFeedbackPopup: React.FC<UserFeedbackPopupProps> = ({
     setIsSubmitting(true);
     setError(null);
 
+    const starsEmoji = '⭐'.repeat(rating);
     const nowStr = new Date().toLocaleString();
-    const emailSubject = `[AFKET Feedback] ${rating}/5 Stars - ${category} from ${userName}`;
-    const emailBody = [
-      `AFKET PLATFORM USER FEEDBACK`,
+    const waFeedbackMessage = [
+      `*AFKET PLATFORM FEEDBACK* 🌾`,
       `------------------------------------`,
-      `Date & Time: ${nowStr}`,
-      `Customer Name: ${userName}`,
-      `Account Email: ${user.email || 'N/A'}`,
-      `Phone Number: ${user.phone || 'N/A'}`,
-      `Account Role: ${user.role.toUpperCase()}`,
-      `Account Type: ${user.accountType === 'company' ? 'Company/Business' : 'Individual/Solo'}`,
-      user.businessName ? `Business Name: ${user.businessName}` : '',
-      `Location: ${user.location || 'N/A'}`,
-      ``,
-      `FEEDBACK DETAILS`,
+      `*Rating:* ${starsEmoji} (${rating}/5 Stars)`,
+      `*Topic:* ${category}`,
+      `*Customer:* ${userName} (${user.role.toUpperCase()}${user.businessName ? ` - ${user.businessName}` : ''})`,
+      user.email ? `*Email:* ${user.email}` : '',
+      user.phone ? `*Phone:* ${user.phone}` : '',
+      user.location ? `*Location:* ${user.location}` : '',
+      `*Submitted:* ${nowStr}`,
       `------------------------------------`,
-      `Category: ${category}`,
-      `Satisfaction Rating: ${rating}/5 Stars`,
-      ``,
-      `Feedback & Suggestions:`,
-      `${feedbackText.trim()}`,
-      ``,
+      `*Feedback Message:*`,
+      feedbackText.trim(),
       `------------------------------------`,
-      `Submitted via AFKET African Market Platform`
-    ].filter(line => line !== null && line !== undefined).join('\n');
+      `Sent via AFKET Trade Platform`
+    ].filter(Boolean).join('\n');
 
-    const mailtoLink = `mailto:${AFKET_SUPPORT.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    setEmailMailtoUrl(mailtoLink);
+    const feedbackWhatsAppLink = `https://wa.me/265987523475?text=${encodeURIComponent(waFeedbackMessage)}`;
+    setWaFeedbackUrl(feedbackWhatsAppLink);
 
     try {
       // 1. Submit to database & local records
@@ -93,17 +86,18 @@ export const UserFeedbackPopup: React.FC<UserFeedbackPopupProps> = ({
       // Mark feedback as completed once per customer
       localStorage.setItem(`afket_feedback_completed_${user.id}`, 'true');
 
-      // 2. Dispatch answers to email client
+      // 2. Dispatch feedback message through WhatsApp
       try {
-        const mailAnchor = document.createElement('a');
-        mailAnchor.href = mailtoLink;
-        mailAnchor.target = '_blank';
-        mailAnchor.rel = 'noopener noreferrer';
-        document.body.appendChild(mailAnchor);
-        mailAnchor.click();
-        document.body.removeChild(mailAnchor);
-      } catch (mailErr) {
-        console.warn('Mailto link trigger fallback:', mailErr);
+        const anchor = document.createElement('a');
+        anchor.href = feedbackWhatsAppLink;
+        anchor.target = '_blank';
+        anchor.rel = 'noopener noreferrer';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+      } catch (waErr) {
+        console.warn('WhatsApp trigger fallback:', waErr);
+        window.open(feedbackWhatsAppLink, '_blank');
       }
 
       setSubmitted(true);
@@ -128,56 +122,42 @@ export const UserFeedbackPopup: React.FC<UserFeedbackPopupProps> = ({
 
         {submitted ? (
           <div className="py-4 sm:py-6 text-center space-y-3 sm:space-y-4">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-xs">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#25D366]/15 text-[#25D366] rounded-full flex items-center justify-center mx-auto shadow-xs">
               <CheckCircle2 className="h-6 w-6 sm:h-8 sm:w-8" />
             </div>
             <div className="space-y-1">
               <h3 className="text-lg sm:text-xl font-sans font-black text-gray-900">Thank You for Your Feedback!</h3>
               <p className="text-[11px] sm:text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
-                Your answers have been saved and sent to our support team at <strong className="text-gray-900">{AFKET_SUPPORT.email}</strong>.
+                Your feedback has been prepared and opened in WhatsApp for delivery to AFKET support.
               </p>
             </div>
 
-            <div className="p-3 sm:p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-xl sm:rounded-2xl text-left space-y-1.5 sm:space-y-2">
-              <div className="flex items-center space-x-2 text-emerald-800 text-[11px] sm:text-xs font-bold">
-                <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-emerald-600" />
-                <span>Email dispatched to {AFKET_SUPPORT.email}</span>
+            <div className="p-3 sm:p-3.5 bg-emerald-50/90 border border-emerald-200 rounded-xl sm:rounded-2xl text-left space-y-2">
+              <div className="flex items-center space-x-2 text-emerald-900 text-[11px] sm:text-xs font-bold">
+                <WhatsAppLogo className="h-4 w-4 shrink-0" />
+                <span>Feedback Dispatched via WhatsApp</span>
               </div>
               <p className="text-[10px] sm:text-[11px] text-gray-600 leading-snug">
-                If your email client did not open automatically, you can also send it directly with one click:
+                If WhatsApp did not open automatically, tap below to send your feedback directly:
               </p>
-              {emailMailtoUrl && (
+              {waFeedbackUrl && (
                 <a
-                  href={emailMailtoUrl}
+                  href={waFeedbackUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-[#365314] hover:underline"
+                  className="w-full bg-[#25D366] hover:bg-[#1ebd5b] text-white font-bold py-2.5 px-4 rounded-xl shadow-xs transition flex items-center justify-center space-x-2 text-xs sm:text-sm cursor-pointer"
                 >
-                  <Send className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                  <span>Click here to open email client</span>
+                  <WhatsAppLogo className="h-4 w-4 shrink-0" />
+                  <span>Send via WhatsApp</span>
                 </a>
               )}
-            </div>
-
-            {/* Direct WhatsApp Option on confirmation */}
-            <div className="pt-2 border-t border-gray-100">
-              <p className="text-[11px] sm:text-xs text-gray-600 mb-2 font-medium">Need immediate assistance or direct support?</p>
-              <a
-                href={whatsappChatUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full bg-[#25D366] hover:bg-[#1ebd5b] text-white font-bold py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl sm:rounded-2xl shadow-xs transition flex items-center justify-center space-x-2 text-xs sm:text-sm cursor-pointer"
-              >
-                <WhatsAppLogo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span>Speak to Us Directly on WhatsApp</span>
-              </a>
             </div>
 
             <div className="pt-1">
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full text-[11px] sm:text-xs font-bold text-gray-600 hover:text-gray-900 py-2 sm:py-2.5 px-4 rounded-xl sm:rounded-2xl bg-gray-100 hover:bg-gray-200 transition cursor-pointer"
+                className="w-full text-[11px] sm:text-xs font-bold text-gray-600 hover:text-gray-900 py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl bg-gray-100 hover:bg-gray-200 transition cursor-pointer"
               >
                 Close
               </button>
@@ -312,14 +292,14 @@ export const UserFeedbackPopup: React.FC<UserFeedbackPopupProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 bg-[#365314] hover:bg-[#224411] text-white font-bold py-2.5 sm:py-3 px-3 sm:px-5 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center space-x-1.5 text-xs sm:text-sm cursor-pointer disabled:opacity-50"
+                className="flex-1 bg-[#25D366] hover:bg-[#1ebd5b] text-white font-bold py-2.5 sm:py-3 px-3 sm:px-5 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center space-x-2 text-xs sm:text-sm cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
-                  <span>Sending...</span>
+                  <span>Opening WhatsApp...</span>
                 ) : (
                   <>
-                    <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    <span className="truncate">Send Feedback</span>
+                    <WhatsAppLogo className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
+                    <span className="truncate">Send via WhatsApp</span>
                   </>
                 )}
               </button>

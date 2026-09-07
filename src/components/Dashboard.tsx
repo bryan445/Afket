@@ -8,6 +8,7 @@ import {
   AlertTriangle, ShieldAlert, BellRing, Mail, MessageCircle, PhoneCall, Headphones, HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { TopTradePartners } from './TopTradePartners';
 
 interface DashboardProps {
   user: UserProfile;
@@ -31,7 +32,7 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
   const [quoteWeight, setQuoteWeight] = useState('15');
   const [calculatedQuote, setCalculatedQuote] = useState<number | null>(null);
   const [calculatedDays, setCalculatedDays] = useState<number | null>(null);
-  const [connectionTab, setConnectionTab] = useState<'sellers' | 'buyers'>('sellers');
+  const [allMarketplaceProducts, setAllMarketplaceProducts] = useState<Product[]>([]);
 
   // Contact proposal modal simulations
   const [pitchModalOpen, setPitchModalOpen] = useState(false);
@@ -44,21 +45,23 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
     async function loadDashboardData() {
       try {
         setLoading(true);
-        const fetchedProfiles = await db.auth.listProfiles();
+        const [fetchedProfiles, allProds] = await Promise.all([
+          db.auth.listProfiles().catch(() => []),
+          db.products.list().catch(() => [])
+        ]);
         setAllProfiles(fetchedProfiles);
+        setAllMarketplaceProducts(allProds);
 
         if (user.role === 'buyer') {
-          const fetchedOrders = await db.orders.listByBuyer(user.id);
+          const fetchedOrders = await db.orders.listByBuyer(user.id).catch(() => []);
           setOrders(fetchedOrders);
         } else if (user.role === 'seller') {
-          const fetchedOrders = await db.orders.listBySeller(user.id);
+          const fetchedOrders = await db.orders.listBySeller(user.id).catch(() => []);
           setOrders(fetchedOrders);
-          const allProds = await db.products.list();
           setProducts(allProds.filter(p => p.sellerId === user.id));
         } else if (user.role === 'logistics_provider') {
-          const myJobs = await db.logistics.listProviderJobs(user.id);
+          const myJobs = await db.logistics.listProviderJobs(user.id).catch(() => []);
           setLogisticsJobs(myJobs);
-          const openJobs = await db.logistics.listAvailableJobs();
           setProducts([]); // not used in logistics directly
           setOrders([]);   // loaded for available routes indirectly
         }
@@ -488,148 +491,47 @@ export default function Dashboard({ user, setCurrentTab }: DashboardProps) {
                 </form>
               </div>
 
-              {/* Registered Seller Cooperatives */}
-              {allProfiles.filter(p => p.role === 'seller').length > 0 && (
-                <div className="bg-white border border-gray-100 rounded-3xl p-6 text-left shadow-xs">
-                  <div className="flex justify-between items-center mb-4">
-                    <div>
-                      <h3 className="text-lg font-sans font-black tracking-tight text-[#1F2937]">Registered Seller Cooperatives</h3>
-                      <p className="text-xs text-gray-500 font-medium">Verified farm unions and agricultural suppliers registered on AFKET.</p>
-                    </div>
-                    <span className="text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-100 px-2.5 py-0.5 rounded-full font-bold">Verified Partners</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {allProfiles.filter(p => p.role === 'seller').map((seller) => (
-                      <div key={seller.id} className="bg-[#FAF9F6]/80 rounded-2xl p-4 border border-gray-100 hover:border-amber-200 transition duration-300 flex flex-col justify-between space-y-3 text-left">
-                        <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] text-gray-400 font-mono font-bold truncate max-w-[120px]">{seller.location || 'Pan-African Supplier'}</span>
-                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                              Verified
-                            </span>
-                          </div>
-                          <h4 className="text-xs font-black text-[#1F2937] leading-tight line-clamp-1">{seller.businessName || seller.fullName}</h4>
-                          <span className="text-[10px] text-gray-500 block leading-tight mt-0.5">Rep: {seller.fullName}</span>
-                          {seller.phone && (
-                            <div className="text-[10px] text-gray-400 font-mono mt-1">{seller.phone}</div>
-                          )}
-                        </div>
-
-                        <button
-                          id={`btn-view-seller-products-${seller.id}`}
-                          onClick={() => handleExploreSupplier(seller.id, seller.businessName || seller.fullName)}
-                          className="w-full bg-[#365314] hover:bg-[#224411] text-white text-[10px] font-bold py-1.5 rounded-lg transition text-center cursor-pointer flex items-center justify-center gap-1"
-                        >
-                          <Search className="h-2.5 w-2.5" />
-                          View Seller Products
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Top Trade Partners Directory (Privacy-first with 5s Flash Animation Exchange) */}
+              <TopTradePartners
+                user={user}
+                allProfiles={allProfiles}
+                marketplaceProducts={allMarketplaceProducts}
+                orders={orders}
+                dashSearch={dashSearch}
+                dashCategory={dashCategory}
+                onExploreSupplier={handleExploreSupplier}
+                onOpenPitchModal={handleOpenPitchModal}
+              />
             </div>
           )}
 
+          {/* 2. SELLER DASHBOARD SPECIFICS */}
+          {user.role === 'seller' && (
+            <div className="space-y-6">
+              {/* Top Trade Partners Directory (Privacy-first with 5s Flash Animation Exchange) */}
+              <TopTradePartners
+                user={user}
+                allProfiles={allProfiles}
+                marketplaceProducts={allMarketplaceProducts}
+                orders={orders}
+                onExploreSupplier={handleExploreSupplier}
+                onOpenPitchModal={handleOpenPitchModal}
+              />
+            </div>
+          )}
 
           {/* 3. LOGISTICS PROVIDER DASHBOARD SPECIFICS */}
           {user.role === 'logistics_provider' && (
             <div className="space-y-6">
-              {/* Trade Connections Directory */}
-              <div className="bg-white border border-gray-100 rounded-3xl p-6 text-left shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-                  <div>
-                    <h3 className="text-lg font-sans font-black tracking-tight text-[#1F2937]">Regional Direct Trade Contacts</h3>
-                    <p className="text-xs text-gray-500 font-medium">Pitch cargo transport directly to active sellers and buyers.</p>
-                  </div>
-
-                  <div className="inline-flex bg-gray-100 p-1 rounded-xl shrink-0">
-                    <button
-                      onClick={() => setConnectionTab('sellers')}
-                      className={`px-3 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer ${connectionTab === 'sellers' ? 'bg-[#365314] text-white shadow-xs' : 'text-gray-500 hover:text-gray-900'}`}
-                    >
-                      Top Sellers
-                    </button>
-                    <button
-                      onClick={() => setConnectionTab('buyers')}
-                      className={`px-3 py-1.5 text-xs font-bold rounded-lg transition cursor-pointer ${connectionTab === 'buyers' ? 'bg-[#365314] text-white shadow-xs' : 'text-gray-500 hover:text-gray-900'}`}
-                    >
-                      Top Buyers
-                    </button>
-                  </div>
-                </div>
-
-                {connectionTab === 'sellers' ? (
-                  <div className="space-y-3">
-                    {allProfiles.filter(p => p.role === 'seller').length === 0 ? (
-                      <div className="bg-[#FAF9F6] rounded-2xl p-6 text-center text-xs text-gray-500 border border-gray-100">
-                        No registered seller cooperatives or suppliers yet.
-                      </div>
-                    ) : (
-                      allProfiles.filter(p => p.role === 'seller').map((sel) => (
-                        <div key={sel.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-[#FAF9F6]/85 rounded-2xl border border-gray-100 hover:bg-[#FAF9F6] transition">
-                          <div className="flex items-start space-x-3">
-                            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs shrink-0">
-                              {sel.businessName ? sel.businessName.slice(0, 2).toUpperCase() : sel.fullName.slice(0, 2).toUpperCase()}
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-sans font-black text-[#1F2937] leading-tight">{sel.businessName || sel.fullName}</h4>
-                              <span className="text-xs text-gray-500 font-medium block">
-                                Contact Rep: {sel.fullName} {sel.phone && <>• <span className="font-mono text-[10px]">{sel.phone}</span></>}
-                              </span>
-                              <div className="flex items-center space-x-2 text-[10px] mt-1.5">
-                                <span className="bg-[#ECFCCB] text-[#365314] px-1.5 py-0.5 rounded font-bold">Verified Supplier</span>
-                                <span className="text-gray-400">Loc: {sel.location || sel.nationality || 'Africa'}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleOpenPitchModal(sel.businessName || sel.fullName, 'seller')}
-                            className="mt-3 sm:mt-0 text-xs bg-[#D97706] hover:bg-[#b45309] text-white font-bold px-3.5 py-2 rounded-xl transition cursor-pointer self-start sm:self-center"
-                          >
-                            Pitch Express Freight
-                          </button>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {allProfiles.filter(p => p.role === 'buyer').length === 0 ? (
-                      <div className="bg-[#FAF9F6] rounded-2xl p-6 text-center text-xs text-gray-500 border border-gray-100">
-                        No registered buyers or importers yet.
-                      </div>
-                    ) : (
-                      allProfiles.filter(p => p.role === 'buyer').map((byr) => (
-                        <div key={byr.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-[#FAF9F6]/85 rounded-2xl border border-gray-100 hover:bg-[#FAF9F6] transition">
-                          <div className="flex items-start space-x-3">
-                            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs shrink-0">
-                              {byr.businessName ? byr.businessName.slice(0, 2).toUpperCase() : byr.fullName.slice(0, 2).toUpperCase()}
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-sans font-black text-[#1F2937] leading-tight">{byr.businessName || byr.fullName}</h4>
-                              <span className="text-xs text-gray-500 font-medium block">
-                                Purchasing Rep: {byr.fullName} {byr.phone && <>• <span className="font-mono text-[10px]">{byr.phone}</span></>}
-                              </span>
-                              <div className="flex items-center space-x-2 text-[10px] mt-1.5">
-                                <span className="bg-[#FFFBEB] text-[#D97706] px-1.5 py-0.5 rounded font-bold">Verified Importer</span>
-                                <span className="text-gray-400">Loc: {byr.location || byr.nationality || 'Africa'}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleOpenPitchModal(byr.businessName || byr.fullName, 'buyer')}
-                            className="mt-3 sm:mt-0 text-xs bg-[#365314] hover:bg-[#224411] text-white font-bold px-3.5 py-2 rounded-xl transition cursor-pointer self-start sm:self-center"
-                          >
-                            Offer Transit Lane
-                          </button>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                )}
-              </div>
+              {/* Top Trade Partners Directory (Privacy-first with 5s Flash Animation Exchange) */}
+              <TopTradePartners
+                user={user}
+                allProfiles={allProfiles}
+                marketplaceProducts={allMarketplaceProducts}
+                orders={orders}
+                onExploreSupplier={handleExploreSupplier}
+                onOpenPitchModal={handleOpenPitchModal}
+              />
 
               {/* Cargo Freight Route Quote Planner */}
               <div className="bg-white border border-gray-100 rounded-3xl p-6 text-left shadow-xs">

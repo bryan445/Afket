@@ -16,9 +16,12 @@ import {
   UserFeedback
 } from '../types';
 
-// Real Supabase credentials from environment
-const rawUrl = ((import.meta as any).env.VITE_SUPABASE_URL || '').trim();
-const rawKey = ((import.meta as any).env.VITE_SUPABASE_ANON_KEY || '').trim();
+// Real Supabase credentials from environment with direct project fallback
+const defaultSupabaseUrl = 'https://axbgfjywhenhzcdqensk.supabase.co';
+const defaultSupabaseKey = 'sb_publishable_yHdSibRZbElBvI8gMAocYA_isxh99Yv';
+
+const rawUrl = (((import.meta as any).env?.VITE_SUPABASE_URL || defaultSupabaseUrl)).trim();
+const rawKey = (((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || defaultSupabaseKey)).trim();
 
 const isValidSupabaseUrl = (url: string): boolean => {
   if (!url) return false;
@@ -733,12 +736,34 @@ export const db = {
     },
 
     listProfiles: async (): Promise<UserProfile[]> => {
-      if (!isSupabaseConfigured || !supabase) {
-        throw new Error('Database is not configured. Please contact support.');
+      let dbProfiles: UserProfile[] = [];
+      if (isSupabaseConfigured && supabase) {
+        try {
+          const { data, error } = await supabase.from('profiles').select('*');
+          if (!error && data && data.length > 0) {
+            dbProfiles = data.map(normalizeProfile);
+            try {
+              setLocalStorage('afket_profiles', dbProfiles);
+            } catch (e) {
+              // ignore cache write error
+            }
+          } else if (error) {
+            console.warn('Database profiles query warning:', error.message);
+          }
+        } catch (err) {
+          console.warn('Database profiles fetch exception:', err);
+        }
       }
-      const { data, error } = await supabase.from('profiles').select('*');
-      if (error) throw new Error(error.message);
-      return (data || []).map(normalizeProfile);
+
+      // Merge with any local cache so profiles are never lost
+      const localProfiles = getLocalStorage<UserProfile>('afket_profiles', []);
+      const profileMap = new Map<string, UserProfile>();
+      dbProfiles.forEach(p => profileMap.set(p.id, p));
+      localProfiles.forEach(p => {
+        if (!profileMap.has(p.id)) profileMap.set(p.id, p);
+      });
+
+      return Array.from(profileMap.values());
     },
 
     uploadLogo: async (userId: string, file: File | Blob, fileName: string): Promise<string> => {
