@@ -1,3 +1,15 @@
+<div align="center">
+  <img src="assets/afket-logo.png" alt="Afket African Market Logo" width="280">
+
+  <h1>AFKET</h1>
+  <h3>Connecting Businesses. Empowering Trade.</h3>
+
+  <p>
+    A B2B Marketplace and Business Connection Platform
+  </p>
+</div>
+
+---
 # AFKET 🌍
 ### Connecting Businesses. Empowering Trade. Creating Opportunities.
 
