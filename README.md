@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/afket-logo.png" alt="Afket African Market Logo" width="280">
+  <img src="main/src/assets/images/afket_logo_1782851553801.jpg" alt="Afket African Market Logo" width="280">
 
   <h1>AFKET</h1>
   <h3>Connecting Businesses. Empowering Trade.</h3>
