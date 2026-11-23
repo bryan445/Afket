@@ -1,11 +1,19 @@
 <div align="center">
-  <img src="[main/src/assets/images/afket_logo_1782851553801.jpg](https://github.com/bryan445/Afket/blob/main/src/assets/images/afket_logo_1782851553801.jpg)" alt="Afket African Market Logo" width="280">
+  <img
+    src="https://raw.githubusercontent.com/bryan445/Afket/main/src/assets/images/afket_logo_1782851553801.jpg"
+    alt="Afket African Market Logo"
+    width="250"
+  />
 
   <h1>AFKET</h1>
   <h3>Connecting Businesses. Empowering Trade.</h3>
 
   <p>
     A B2B Marketplace and Business Connection Platform
+  </p>
+
+  <p>
+    🇲🇼 Built in Malawi | 🌍 Designed for Africa
   </p>
 </div>
 
